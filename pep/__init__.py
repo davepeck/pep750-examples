@@ -4,9 +4,6 @@ Examples for PEP 750.
 This repository has a .devcontainer and a Dockerfile that pulls down a fork
 of Python 3.14 that supports an *older* version of the PEP 750 specification.
 
-If you open the repository in `vscode` and say "yes" when it asks if you'd like
-to work in a devcontainer, you'll be able to run these examples.
-
 We smooth over the differences here by defining the *current* PEP 750's
 `Template` and `Interpolation` types. We also implement the `t` prefix here.
 
