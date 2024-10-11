@@ -41,7 +41,7 @@ def test_format_spec():
     assert f(template) == f"{42:04d}"
 
 def test_format_spec_and_conv():
-    template: Template = t"{42!s:>8}"
+    template: Template = t"{42!r:>8}"
     assert f(template) == f"{42!r:>8}"
 
 def test_pep_example():
