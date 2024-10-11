@@ -19,6 +19,5 @@ jobs:
           - name: Build Docker image
             run: docker build -t pep750-docker -f .devcontainer/Dockerfile .
           - name: Run tests
-            run: docker run --rm pep750-docker pytest
-
+            run: docker run -v $(pwd):/app -w /app pep750-docker /bin/bash -c "pip install -r requirements.txt && pytest"
 
