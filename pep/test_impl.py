@@ -1,3 +1,10 @@
+"""
+Test that our implementation of PEP 750, which is currently partially in the
+fork of cpython, and partially in the __init__.py in this repository, works.
+
+See the __init__.py for a more detailed explanation.
+"""
+
 from . import t, Template, Interpolation
 
 

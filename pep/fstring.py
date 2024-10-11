@@ -1,3 +1,15 @@
+"""
+Implement f-string like behavior on top of t-strings.
+
+Tempalate strings are a generalization of f-strings. t-strings evaluate
+to a new type (`Template`); it is possible to take a `Template` and build
+a string that exactly matches the result had an `f`-prefix been used in the
+first place.
+
+See also test_fstring.py
+"""
+
+
 from typing import Any, Literal
 
 from . import Template, Interpolation

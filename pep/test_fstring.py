@@ -1,3 +1,8 @@
+"""
+Test our 'implementation' of f-string behavior as seen in PEP 750.
+"""
+
+
 from . import t, Template
 from .fstring import f
 
