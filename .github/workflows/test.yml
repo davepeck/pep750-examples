@@ -19,6 +19,6 @@ jobs:
           - name: Build Docker image
             run: docker build -t pep750-docker -f .devcontainer/Dockerfile .
           - name: Run tests
-            run: docker exec pep750-docker pytest
+            run: docker run --rm pep750-docker pytest
 
 
