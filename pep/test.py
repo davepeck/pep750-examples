@@ -8,9 +8,6 @@ See the __init__.py for a more detailed explanation.
 from . import t, Template, Interpolation
 
 
-def test_intentionally_broken():
-    assert False
-
 def test_empty():
     template = t""
     assert isinstance(template, Template)
