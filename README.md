@@ -4,9 +4,9 @@ This repository contains the code examples found in [PEP 750: Template Strings](
 
 ## Running this code
 
-This repository contains a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The container includes a [fork of cpython 3.14](https://github.com/lysnikolaou/cpython/tree/tag-strings-rebased) that provides a prototype implementation of PEP 750.
+This repository contains a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14](https://github.com/lysnikolaou/cpython/tree/tag-strings-rebased) that provides a prototype implementation of PEP 750.
 
-To use it:
+It's easy to use:
 
 1. Make sure you have Docker installed
 2. Open this repository with `vscode`
@@ -15,7 +15,7 @@ To use it:
 After the container is initialized, make sure that everything works by opening up a terminal in vscode. This will open in the running docker instance. Then:
 
 ```
-root@60c385d89502:/workspaces/pep750-examples# python --version
+/workspaces/pep750-examples# python --version
 Python 3.14.0a0
 ```
 
