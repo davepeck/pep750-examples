@@ -1,0 +1,41 @@
+{
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "postCreateCommand": {
+        "install dependencies": "pip install -r requirements.txt"
+    },
+    "features": {
+        "git": "os-provided",
+        "sshd": "latest"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // Python auto-complete -- although, of course, it doesn't
+                // support the new tagstring syntax in the PEP
+                "ms-python.python",
+                // Edit the devcontainer and other dockerfiles.
+                "ms-azuretools.vscode-docker",
+            ],
+            "settings": {
+                "editor.insertSpaces": true,
+                "editor.rulers": [
+                    80
+                ],
+                "editor.tabSize": 4,
+                "editor.trimAutoWhitespace": true,
+                "files.encoding": "utf8",
+                "files.eol": "\n",
+                "files.insertFinalNewline": true,
+                "files.trimTrailingWhitespace": true,
+                "[restructuredtext]": {
+                    "editor.tabSize": 3
+                },
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestEnabled": true,
+                "python.defaultInterpreterPath": "/usr/local/bin/python"
+            }
+        }
+    }
+}

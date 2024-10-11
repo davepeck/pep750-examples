@@ -1,0 +1,9 @@
+[project]
+name = "pep750_examples"
+version = "0.0.1"
+description = "Collection of examples referenced by PEP 750."
+requires-python = ">=3.14"
+
+[tool.pytest.ini_options]
+testpaths = ["pep"]
+
