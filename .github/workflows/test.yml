@@ -1,0 +1,24 @@
+# Simply run pytest inside the docker container (.devcontainer/Docker) on
+# any push to any branch
+
+name: Test
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+          - name: Build Docker image
+            run: docker build -t pep750-docker -f .devcontainer/Dockerfile .
+          - name: Run tests
+            run: docker exec pep750-docker pytest
+
+
