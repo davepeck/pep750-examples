@@ -52,10 +52,17 @@ def test_conv():
     assert template.args[1].value == 42
     assert template.args[1].conv == "a"
 
-
 def test_format_spec():
     template = t"{42:04d}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
+    assert template.args[1].format_spec == "04d"
+
+def test_format_spec_and_conv():
+    template = t"{42!r:04d}"
+    assert isinstance(template, Template)
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 42
+    assert template.args[1].conv == "r"
     assert template.args[1].format_spec == "04d"

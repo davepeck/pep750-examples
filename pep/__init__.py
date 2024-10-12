@@ -41,13 +41,12 @@ class Template:
     args: Sequence[str | Interpolation]
 
 
-
 def t(*args: str | OldVersionOfInterpolation) -> Template:
     """
     Implement the proposed PEP 750 template string behavior, using the
     older cpython implementation of tagged strings.
 
-    See test_tstring.py for examples of the expected behavior.
+    See test.py for examples of the expected behavior.
     """
 
     eo_args: list[str | Interpolation] = []
@@ -107,4 +106,3 @@ def t(*args: str | OldVersionOfInterpolation) -> Template:
     assert len(eo_args) % 2 == 1
 
     return Template(tuple(eo_args))
-
