@@ -19,13 +19,10 @@ it exists only temporarily, to smooth over differences between the old PEP 750
 spec and the new.
 """
 
-from typing import (
-    Any,
-    Sequence,
-    Literal,
-    Interpolation as OldVersionOfInterpolation,
-)
 from dataclasses import dataclass
+from typing import Any
+from typing import Interpolation as OldVersionOfInterpolation
+from typing import Literal, Sequence
 
 
 @dataclass(frozen=True, match_args=True)

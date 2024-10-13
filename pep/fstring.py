@@ -11,7 +11,7 @@ See also test_fstring.py
 
 from typing import Any, Literal
 
-from . import Template, Interpolation
+from . import Interpolation, Template
 
 
 def convert(value: Any, conv: Literal["a", "r", "s"] | None) -> Any:
