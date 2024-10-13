@@ -5,7 +5,7 @@ standard logging module.
 
 from json import JSONEncoder
 from logging import Formatter, LogRecord
-from typing import Any, Protocol
+from typing import Any, Literal, Mapping, Protocol
 
 from . import Interpolation, Template, t
 from .fstring import f
@@ -13,6 +13,11 @@ from .fstring import f
 
 class Encoder(Protocol):
     def encode(self, o: Any) -> str: ...
+
+
+#
+# Approach 1: Define a custom message type
+#
 
 
 class TemplateMessageMaker:
@@ -48,17 +53,62 @@ class TemplateMessage:
         return self.encoder.encode(self.data)
 
 
-class HumanFormatter(Formatter):
+#
+# Approach 2: Define custom formatters
+#
+
+
+type FormatStyle = Literal["%", "{", "$"]
+
+
+class TemplateFormatterBase(Formatter):
+    encoder: Encoder
+
+    def __init__(
+        self,
+        fmt: str | None = None,
+        datefmt: str | None = None,
+        style: FormatStyle = "%",
+        validate: bool = True,
+        *,
+        defaults: Mapping[str, Any] | None = None,
+        encoder: Encoder | None = None,
+    ):
+        super().__init__(fmt, datefmt, style, validate, defaults=defaults)
+        self.encoder = encoder or JSONEncoder()
+
+
+class MessageFormatter(TemplateFormatterBase):
+    def message(self, template: Template) -> str:
+        return f(template)
+
     def format(self, record: Any) -> str:
         msg = record.msg
-        if not isinstance(msg, TemplateMessage):
+        if not isinstance(msg, Template):
             return super().format(record)
-        return msg.message
+        return self.message(msg)
 
 
-class StructuredFormatter(Formatter):
+class ValuesFormatter(TemplateFormatterBase):
+    def values(self, template: Template) -> Mapping[str, Any]:
+        return {
+            arg.expr: arg.value
+            for arg in template.args
+            if isinstance(arg, Interpolation)
+        }
+
     def format(self, record: LogRecord) -> str:
         msg = record.msg
-        if not isinstance(msg, TemplateMessage):
+        if not isinstance(msg, Template):
             return super().format(record)
-        return str(msg.encoder.encode(msg.data))
+        return self.encoder.encode(self.values(msg))
+
+
+class CombinedFormatter(MessageFormatter, ValuesFormatter):
+    def format(self, record: LogRecord) -> str:
+        msg = record.msg
+        if not isinstance(msg, Template):
+            return super().format(record)
+        return self.encoder.encode(
+            {"message": self.message(msg), "values": self.values(msg)}
+        )
