@@ -19,13 +19,10 @@ it exists only temporarily, to smooth over differences between the old PEP 750
 spec and the new.
 """
 
-from typing import (
-    Any,
-    Sequence,
-    Literal,
-    Interpolation as OldVersionOfInterpolation,
-)
 from dataclasses import dataclass
+from typing import Any
+from typing import Interpolation as OldVersionOfInterpolation
+from typing import Literal, Sequence
 
 
 @dataclass(frozen=True, match_args=True)
@@ -41,13 +38,12 @@ class Template:
     args: Sequence[str | Interpolation]
 
 
-
 def t(*args: str | OldVersionOfInterpolation) -> Template:
     """
     Implement the proposed PEP 750 template string behavior, using the
     older cpython implementation of tagged strings.
 
-    See test_tstring.py for examples of the expected behavior.
+    See test.py for examples of the expected behavior.
     """
 
     eo_args: list[str | Interpolation] = []
@@ -107,4 +103,3 @@ def t(*args: str | OldVersionOfInterpolation) -> Template:
     assert len(eo_args) % 2 == 1
 
     return Template(tuple(eo_args))
-

@@ -1,2 +1,4 @@
+# use a custom version of black that I hacked up to support t-strings (-Dave)
+git+https://github.com/davepeck/black@pep750-support#egg=black
 pytest>=8.3.3
-
+isort>=5.13.2

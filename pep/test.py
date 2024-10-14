@@ -5,7 +5,7 @@ fork of cpython, and partially in the __init__.py in this repository, works.
 See the __init__.py for a more detailed explanation.
 """
 
-from . import t, Template, Interpolation
+from . import Interpolation, Template, t
 
 
 def test_empty():
@@ -13,10 +13,12 @@ def test_empty():
     assert isinstance(template, Template)
     assert template.args == ("",)
 
+
 def test_simple():
     template = t"hello"
     assert isinstance(template, Template)
     assert template.args == ("hello",)
+
 
 def test_only_interpolation():
     template = t"{42}"
@@ -28,6 +30,7 @@ def test_only_interpolation():
     assert template.args[1].value == 42
     assert isinstance(template.args[2], str)
     assert template.args[2] == ""
+
 
 def test_mixed():
     v = 99
@@ -45,6 +48,7 @@ def test_mixed():
     assert isinstance(template.args[4], str)
     assert template.args[4] == "goodbye"
 
+
 def test_conv():
     template = t"{42!a}"
     assert isinstance(template, Template)
@@ -58,4 +62,13 @@ def test_format_spec():
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
+    assert template.args[1].format_spec == "04d"
+
+
+def test_format_spec_and_conv():
+    template = t"{42!r:04d}"
+    assert isinstance(template, Template)
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 42
+    assert template.args[1].conv == "r"
     assert template.args[1].format_spec == "04d"

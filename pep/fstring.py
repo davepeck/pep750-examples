@@ -9,10 +9,9 @@ first place.
 See also test_fstring.py
 """
 
-
 from typing import Any, Literal
 
-from . import Template, Interpolation
+from . import Interpolation, Template
 
 
 def convert(value: Any, conv: Literal["a", "r", "s"] | None) -> Any:
@@ -23,6 +22,7 @@ def convert(value: Any, conv: Literal["a", "r", "s"] | None) -> Any:
     elif conv == "s":
         return str(value)
     return value
+
 
 def f(template: Template) -> str:
     """Implement f-string behavior using the PEP 750 t-string behavior."""
