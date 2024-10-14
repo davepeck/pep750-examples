@@ -32,12 +32,21 @@ The code in [`fstring.py`](./pep/fstring.py) implements f-string behavior on _to
 
 See also [the tests](./pep/test_fstring.py).
 
+This example is described in detail in PEP 750.
+
 ### Structured logging
 
-IN PROGRESS
+The code in [`logging.py`](./pep/logging.py) implements two separate approaches to structured logging, showcasing how a single `logger.info(t"...")` call can lead to emitting both human-readable _and_ structured (in this case, JSON-formatted) data.
+
+The first approach follows the approach already found in the [Python Logging Cookbook](https://docs.python.org/3/howto/logging-cookbook.html#implementing-structured-logging); the second approach defines custom `Formatter`s that can be used to emit human-readable and structured output to different sinks (like two different files).
+
+See the tests in [`test_logging.py`](./pep/test_logging.py).
+
+This example is described in detail in PEP 750.
 
 ### html templating
 
 IN PROGRESS
 
+This example will be described in detail _here_ in this README, since it will _not_ be described in detail (only referenced) in PEP 750.
 
