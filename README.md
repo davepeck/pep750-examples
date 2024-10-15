@@ -195,7 +195,15 @@ element = html(t"<ul>{item1}{item2}</ul>")
 assert str(element) == "<ul><li>Item 1</li><li>Item 2</li></ul>"
 ```
 
-**TODO**: The final interesting piece I intend to implement is a way to invoke a "component" function from within a template. In particular, the tag itself can be a function call:
+Tag names can also be interpolated:
+
+```python
+tag = "h1"
+element = html(t"<{tag}>Hello, World!</{tag}>")
+assert str(element) == "<h1>Hello, World!</h1>"
+```
+
+Tag name interpolation allows us to support a simple form of "components". For instance, we can define a `magic()` function that alters both the attributes and children of an element:
 
 ```python
 def magic(children: Sequence[Element | str], attributes: Mapping[str, str | bool]) -> Element:
@@ -208,6 +216,8 @@ element = html(t"<{magic} id="wow"><b>FUN!</b></{magic}>")
 assert str(element) == '<div id="wow" data-magic="yes"><b>FUN!</b>Magic!</div>'
 ```
 
-This isn't implemented... yet!
+The `html()` template processing code sees that `magic` is an interpolation, that it occurs in the tag position, and that its value is a `Callable`. As a result, `html()` calls `magic()` with the interpolated children and attributes and uses the result returned _by_ `magic()` as the final `Element`.
+
+**TODO** Tag function "components" aren't implemented... yet!
 
 
