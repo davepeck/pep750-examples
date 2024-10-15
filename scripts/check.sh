@@ -1,3 +1,3 @@
 isort pep
 black pep
-pytest
+pytest $@
