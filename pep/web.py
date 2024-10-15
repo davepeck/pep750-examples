@@ -7,7 +7,7 @@ from . import Interpolation, Template
 
 
 def _render_str_attribute(key: str, value: str) -> str:
-    return f'{key}="{value}"'
+    return f'{key}="{escape(value, quote=True)}"'
 
 
 def _render_bool_attribute(key: str, value: bool) -> str:

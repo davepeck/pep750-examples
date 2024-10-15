@@ -29,6 +29,34 @@ def test_element_with_no_children():
     assert str(element) == "<div />"
 
 
+def test_element_with_attributes():
+    element = Element("div", {"class": "greeting"}, [])
+    assert str(element) == '<div class="greeting" />'
+
+
+def test_element_with_text_children():
+    element = Element("div", {}, ["Hello", "world"])
+    assert str(element) == "<div>Helloworld</div>"
+
+
+def test_element_with_text_children_and_attributes():
+    element = Element("div", {"class": "greeting"}, ["Hello", "world"])
+    assert str(element) == '<div class="greeting">Helloworld</div>'
+
+
+def test_element_attribute_escape():
+    element = Element("div", {"class": 'greeting" onclick="alert("hi")'}, [])
+    assert (
+        str(element)
+        == '<div class="greeting&quot; onclick=&quot;alert(&quot;hi&quot;)" />'
+    )
+
+
+def test_element_child_str_escape():
+    element = Element("div", {}, ['<script>alert("evil")</script>'])
+    assert str(element) == '<div>&lt;script&gt;alert("evil")&lt;/script&gt;</div>'
+
+
 #
 # Tests for html()
 #
@@ -148,6 +176,7 @@ def test_html_attribute_str_interploation():
     template: Template = t"<p class={cls}>{text}</p>"
     element = html(template)
     expected = Element("p", {"class": "greeting"}, ["Hello, world!"])
+    assert element == expected
 
 
 def test_html_attribute_dict_interpolation():
