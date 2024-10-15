@@ -96,14 +96,118 @@ They all use a hypothetical `html()` function that parses template strings to an
 
 A real working implementation of `html()` is found in this repository's [`web.py`](./pep/web.py). Corresponding tests are found in [`test_web.py`](./pep/test_web.py).
 
-Building a full robust HTML templating package on top of template strings is both a noble goal _and_ beyond the scope of this example code. Instead, our goal is to hint at some interesting uses of template strings in the HTML context, and provide an early roadmap (warts and all) for how a more robust package could be built.
+Building a full robust HTML templating package on top of template strings is both a noble goal _and_ beyond the scope of this example code. Instead, our goal is to hint at some interesting uses of template strings in the HTML context, and to provide an early roadmap (warts and all) for how a more robust package might be built.
 
-The `html()` function parses `Template`s into an `Element` type:
+The `Element` class is a simple representation of an HTML element:
 
 ```python
 
 from dataclasses import dataclass
 
-@
+@dataclass(frozen=True)
+class Element:
+    """A simple representation of an HTML element."""
+
+    tag: str  # An empty string indicates a fragment
+    attributes: Mapping[str, str | bool]
+    children: Sequence[Element | str]
+
+    def __str__(self) -> str:
+        ...
 ```
+
+Elements can be converted to strings:
+
+```python
+element = Element(tag="p", attributes={}, children=["hello"])
+assert str(element) == "<p>hello</p>"
+
+element2 = Element(tag="div", attributes={"id": "main"}, children=[element])
+assert str(element2) == '<div id="main"><p>hello</p></div>'
+```
+
+The `html()` function parses PEP 750 template strings to an `Element`:
+
+```python
+def html(template: Template) -> Element:
+    ...
+
+assert html(t"<p>hello</p>") == Element(tag="p", attributes={}, children=["hello"])
+```
+
+The `html()` function supports several features that decide how interpolations are processed based both on their type _and_ their position in the HTML syntax.
+
+Content can be interpolated into the body of an element:
+
+```python
+text = "Hello, World!"
+element = html(t"<p>{text}</p>")
+assert str(element) == "<p>Hello, World!</p>"
+```
+
+When content is interpolated, it is also automatically escaped:
+
+```python
+evil = "<script>alert('evil')</script>"
+element = html(t"<p>{evil}</p>")
+assert str(element) == "<p>&lt;script&gt;alert('evil')&lt;/script&gt;</p>"
+```
+
+Attribute values can be interpolated:
+
+```python
+src = "shrubbery.jpg"
+element = html(t'<img src={src} />')
+assert str(element) == '<img src="shrubbery.jpg" />'
+```
+
+Multiple attributes can be interpolated at once:
+
+```python
+attributes = {"src": "shrubbery.jpg", "alt": "A shrubbery"}
+element = html(t'<img {attributes} />')
+assert str(element) == '<img src="shrubbery.jpg" alt="A shrubbery" />'
+```
+
+Boolean attributes are also supported:
+
+```python
+attributes = {"type": "text", "required": True}
+element = html(t'<input {attributes} />')
+assert str(element) == '<input type="text" required />'
+```
+
+HTML `Element` instances can be nested:
+
+```python
+item1 = html(t"<li>Item 1</li>")
+item2 = html(t"<li>Item 2</li>")
+element = html(t"<ul>{item1}{item2}</ul>")
+assert str(element) == "<ul><li>Item 1</li><li>Item 2</li></ul>"
+```
+
+As a convenience, `html()` also supports a simplification for nesting: if an interpolation's value is a `Template`, it is automatically converted to an `Element`:
+
+```python
+item1 = t"<li>Item 1</li>"
+item2 = t"<li>Item 2</li>"
+element = html(t"<ul>{item1}{item2}</ul>")
+assert str(element) == "<ul><li>Item 1</li><li>Item 2</li></ul>"
+```
+
+**TODO**: The final interesting piece I intend to implement is a way to invoke a "component" function from within a template. In particular, the tag itself can be a function call:
+
+```python
+def magic(children: Sequence[Element | str], attributes: Mapping[str, str | bool]) -> Element:
+    """A simple, but extremely magical, component."""
+    magic_attributes = {**attributes, "data-magic": "yes"}
+    magic_children = [*children, "Magic!"]
+    return Element(tag="div", attributes=magic_attributes, children=magic_children)
+
+element = html(t"<{magic} id="wow"><b>FUN!</b></{magic}>")
+assert str(element) == '<div id="wow" data-magic="yes"><b>FUN!</b>Magic!</div>'
+```
+
+This isn't implemented... yet!
+
 

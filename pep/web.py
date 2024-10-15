@@ -56,19 +56,23 @@ def _render_children(children: Sequence[Element | str]) -> str:
 # ---------------------------------------------------------------------------
 
 
-@dataclass
+@dataclass(frozen=True)
 class Element:
     """
     A simple representation of an HTML element.
 
-    This makes no attempt to be a full-featured HTML representation or to
-    validate the values in any way. It's just a simple data structure that
-    can be rendered to a string.
+    This makes no attempt to be a full-featured HTML representation, to be
+    performant, or to validate the presence of attributes or children in
+    any way. Instead, it's a simple data structure that can be rendered to
+    a string.
+
+    Hopefully it's a useful starting point for thinking about how to build
+    a more robust HTML templating system.
     """
 
-    tag: str  # An empty string represents a fragment
-    attributes: dict[str, str | bool]
-    children: list["Element | str"]
+    tag: str  # An empty string indicates a fragment
+    attributes: Mapping[str, str | bool]
+    children: Sequence["Element | str"]
 
     @classmethod
     def empty(cls) -> Element:
@@ -77,14 +81,20 @@ class Element:
 
     @classmethod
     def fragment(cls, children: Sequence[Element | str]) -> Element:
-        """Create a fragment element (no tag)."""
+        """Create a fragment element (empty tag)."""
         return cls("", {}, list(children))
 
     def __post_init__(self):
+        """Validate the element after it's been created."""
         if self.attributes and not self.tag:
             raise ValueError("Fragments cannot have attributes, only children")
 
+    def append(self, child: Element | str) -> Element:
+        """Append a child to the element."""
+        return Element(self.tag, self.attributes, list(self.children) + [child])
+
     def __str__(self) -> str:
+        """Render the element to an HTML string."""
         # If there's no tag, render the children directly
         if not self.tag:
             return _render_children(self.children)
@@ -112,14 +122,17 @@ class Element:
 
 class _Parser(HTMLParser):
     """
-    A simple HTML parser that constructs an Element tree.
+    A simple HTML parser that constructs a tree of `Element`s.
 
-    This builds on the standard library's HTMLParser. In a few places,
-    it effectively has to "hack" the standard library parser to get the desired
-    behavior.
+    This builds on the Python standard library's HTMLParser. This is fine for
+    our example purposes, but not perfect: we have to work around some of the
+    limitations of the parser (mostly, by overriding interal methods and
+    using internal state) in order to support our desired template string
+    syntax.
 
-    For a production system, a more robust parser would likely be necessary:
-    writing robust template string processing code can be a lot of work!
+    A production system would need a more robust parser, but that's potentially
+    a lot of work! Hopefully this is a useful starting point for thinking about
+    how to build a more robust HTML templating system.
     """
 
     root: Element | None
@@ -134,19 +147,15 @@ class _Parser(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if self.root is not None:
-            raise HTMLParseError(
-                f"Multiple root elements (starting with {self.root.tag} and finding {tag})"
-            )
+            raise HTMLParseError(f"Multiple root elements ({self.root.tag} and {tag})")
 
-        def _fix_none(value: str | None) -> str | bool:
+        def _none_to_true(value: str | None) -> str | bool:
             """Convert None to True for boolean attributes."""
             # Python's HTMLParser uses None to represent boolean attributes,
             # but that's kinda weird. Let's convert it to True.
             return True if value is None else value
 
-        attributes = cast(
-            dict[str, str | bool], {key: _fix_none(value) for key, value in attrs}
-        )
+        attributes = {key: _none_to_true(value) for key, value in attrs}
         element = Element(tag, attributes, [])
         self.stack.append(element)
         self.in_start_tag = False
@@ -158,20 +167,22 @@ class _Parser(HTMLParser):
         if not self.stack:
             self.root = element
         else:
-            self.stack[-1].children.append(element)
+            self.stack[-1] = self.stack[-1].append(element)
 
     def handle_data(self, data: str) -> None:
-        # Ignore whitespace (for now)
+        # Ignore whitespace entirely for now
+        # TODO handle whitespace in a more sophisticated way
         data = data.strip()
         if not data:
             return
         if not self.stack:
             raise HTMLParseError(f"Data outside of root element: {data}")
-        self.stack[-1].children.append(data)
+        self.stack[-1] = self.stack[-1].append(data)
 
     def parse_starttag(self, i: int) -> int:
         # A small hack to allow us to know when we're in a start tag
-        # (but not finish parsing it yet)
+        # (but haven't finished parsing it yet)
+        # TODO: just how accurate is this? Is there a better way?
         self.in_start_tag = True
         return super().parse_starttag(i)
 
@@ -196,9 +207,7 @@ def _process_start_tag_interpolation(value: Any) -> str:
         # TODO We currently assume that we're inside an attribute value in
         # the parse, but this may not always be the case.
         return f'"{value}"'
-    raise HTMLParseError(
-        f"Unsupported start tag interpolation value type: {type(value)}"
-    )
+    raise HTMLParseError(f"Unsupported start tag interpolation: {type(value)}")
 
 
 def _process_content_interpolation(value: Any) -> str:
@@ -218,7 +227,9 @@ def _process_content_interpolation(value: Any) -> str:
     if isinstance(value, str):
         # Escape a value to be used in content
         return escape(value, quote=False)
-    raise HTMLParseError(f"Unsupported content interpolation value type: {type(value)}")
+    # TODO support "component" interpolations: callables that take
+    # the attributes and children and return an Element for rendering
+    raise HTMLParseError(f"Unsupported content interpolation: {type(value)}")
 
 
 # ---------------------------------------------------------------------------
