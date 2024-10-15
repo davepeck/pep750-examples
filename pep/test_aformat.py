@@ -5,6 +5,12 @@ import pytest
 from . import Template, t
 from .aformat import aformat
 
+#
+# The following tests are specific to the aformat() function. They test the
+# async behavior of the function, and the ability to use callable and awaitable
+# values in the template.
+#
+
 
 @pytest.mark.asyncio
 async def test_async_value():
