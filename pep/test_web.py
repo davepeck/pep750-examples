@@ -72,8 +72,10 @@ def test_html_p_text_interpolation_escape():
     evil = "<script>alert('evil')</script>"
     template: Template = t"<p>{evil}</p>"
     element = html(template)
-    expected = Element("p", {}, ["&lt;script&gt;alert('evil')&lt;/script&gt;"])
+    expected = Element("p", {}, ["<script>alert('evil')</script>"])
     assert element == expected
+    as_str = str(element)
+    assert as_str == "<p>&lt;script&gt;alert('evil')&lt;/script&gt;</p>"
 
 
 def test_html_nested_safe_text():

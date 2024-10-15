@@ -24,6 +24,17 @@ def _render_attributes_dict(d: dict[str, str | bool]) -> str:
     return " ".join(_render_attribute(key, value) for key, value in d.items())
 
 
+def _render_children(children: Sequence[Element | str]) -> str:
+    parts = []
+    for child in children:
+        if isinstance(child, Element):
+            parts.append(str(child))
+        else:
+            child = escape(child, quote=False)
+            parts.append(child)
+    return "".join(parts)
+
+
 @dataclass
 class Element:
     """
@@ -54,19 +65,6 @@ class Element:
         if self.is_fragment and self.attributes:
             raise ValueError("Fragments cannot have attributes, only children")
 
-    def _render_children(self) -> str:
-        parts = []
-        for child in self.children:
-            if isinstance(child, Element):
-                parts.append(str(child))
-            else:
-                parts.append(child)
-        return "".join(parts)
-
-    @property
-    def has_children(self) -> bool:
-        return bool(self.children)
-
     def __str__(self) -> str:
         # If there's no tag, render the children directly
         if not self.tag:
@@ -74,16 +72,16 @@ class Element:
 
         # If there's no children, render the tag directly
         attributes_str = _render_attributes_dict(self.attributes)
-        if not self.has_children:
+        if not self.children:
             if attributes_str:
                 return f"<{self.tag} {attributes_str} />"
             return f"<{self.tag} />"
 
         # Render the tag and children
-        children_str = self._render_children()
+        children_str = _render_children(self.children)
         if attributes_str:
-            return f"<{self.tag} {attributes_str}>\n{children_str}\n</{self.tag}>"
-        return f"<{self.tag}>\n{children_str}\n</{self.tag}>"
+            return f"<{self.tag} {attributes_str}>{children_str}</{self.tag}>"
+        return f"<{self.tag}>{children_str}</{self.tag}>"
 
 
 class HTMLParseError(Exception):
@@ -154,7 +152,6 @@ class _Parser(HTMLParser):
             return
         if not self.stack:
             raise HTMLParseError(f"Data outside of root element: {data}")
-        data = escape(data, quote=False)
         self.stack[-1].children.append(data)
 
     def parse_starttag(self, i: int) -> int:
@@ -180,7 +177,7 @@ def html(template: Template) -> Element:
                     parser.feed(str(i.value))
                 elif isinstance(i.value, Template):
                     if parser.in_start_tag:
-                        raise HTMLParseError("Cannot interpolate Element in start tag")
+                        raise HTMLParseError("Cannot interpolate Template in start tag")
                     result = html(i.value)
                     parser.feed(str(result))
                 else:
