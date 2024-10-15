@@ -68,11 +68,34 @@ def test_html_p_text_interpolation():
     assert element == expected
 
 
+def test_html_p_text_interpolation_escape():
+    evil = "<script>alert('evil')</script>"
+    template: Template = t"<p>{evil}</p>"
+    element = html(template)
+    expected = Element("p", {}, ["&lt;script&gt;alert('evil')&lt;/script&gt;"])
+    assert element == expected
+
+
+def test_html_nested_safe_text():
+    good = html(t"<script>alert('good')</script>")
+    template: Template = t"<p>{good}</p>"
+    element = html(template)
+    expected = Element("p", {}, [Element("script", {}, ["alert('good')"])])
+    assert element == expected
+
+
+def test_html_nested_template_text():
+    good = t"<script>alert('good')</script>"
+    template: Template = t"<p>{good}</p>"
+    element = html(template)
+    expected = Element("p", {}, [Element("script", {}, ["alert('good')"])])
+
+
 def test_html_p_with_attributes():
-    text = "Hello, world!"
+    text = 'Hello, "world!"'
     template: Template = t'<p class="greeting">{text}</p>'
     element = html(template)
-    expected = Element("p", {"class": "greeting"}, ["Hello, world!"])
+    expected = Element("p", {"class": "greeting"}, ['Hello, "world!"'])
     assert element == expected
 
 

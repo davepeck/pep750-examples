@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from html import escape
 from html.parser import HTMLParser
 from typing import Literal, Mapping, Sequence, cast
 
@@ -153,7 +154,8 @@ class _Parser(HTMLParser):
             return
         if not self.stack:
             raise HTMLParseError(f"Data outside of root element: {data}")
-        self.stack[-1].children.append(data.strip())
+        data = escape(data, quote=False)
+        self.stack[-1].children.append(data)
 
     def parse_starttag(self, i: int) -> int:
         self.in_start_tag = True
@@ -172,9 +174,25 @@ def html(template: Template) -> Element:
                     if not parser.in_start_tag:
                         raise HTMLParseError("Cannot interpolate dict in HTML content")
                     parser.feed(_render_attributes_dict(i.value))
+                elif isinstance(i.value, Element):
+                    if parser.in_start_tag:
+                        raise HTMLParseError("Cannot interpolate Element in start tag")
+                    parser.feed(str(i.value))
+                elif isinstance(i.value, Template):
+                    if parser.in_start_tag:
+                        raise HTMLParseError("Cannot interpolate Element in start tag")
+                    result = html(i.value)
+                    parser.feed(str(result))
                 else:
-                    assert isinstance(i.value, str)
-                    parser.feed(i.value)
+                    value = i.value
+                    assert isinstance(value, str)
+                    if parser.in_start_tag:
+                        value = escape(value, quote=True)
+                        print(f"Escaped value in start tag: {value}")
+                    else:
+                        value = escape(value, quote=False)
+                        print(f"Escaped value NOT in start tag: {value}")
+                    parser.feed(value)
     parser.close()
     if not parser.root:
         raise HTMLParseError("No root element")
