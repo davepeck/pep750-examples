@@ -4,6 +4,7 @@ import pytest
 
 from . import Template, t
 from .aformat import aformat
+from .fstring import f
 
 #
 # The following tests are specific to the aformat() function. They test the
@@ -42,6 +43,20 @@ async def test_callable_value():
 
     template: Template = t"{value:.2f}"
     assert await aformat(template) == "42.00"
+
+
+# XXX this test does not yet work given the current implementation
+# of PEP750 in cpython and the implementation of t() on top of it.
+# This will change when Lysandros Nikolaou's implementation of PEP750
+# is updated to match the current spec.
+# @pytest.mark.asyncio
+# async def test_await_in_interpolation():
+#     async def value():
+#         await asyncio.sleep(0.1)
+#         return 42
+
+#     template: Template = t"{await value():.2f}"
+#     assert f(template) == "42.00"
 
 
 #
