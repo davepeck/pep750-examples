@@ -4,13 +4,13 @@ from deepdiff import DeepDiff
 from . import Template, t
 from .web import Element, HTMLParseError, html
 
-#
-# Tests for Element.__str__()
-#
+# ---------------------------------------------------------------------------
+# Tests for the Element class (mostly, its __str__ method)
+# ---------------------------------------------------------------------------
 
 
 def test_empty_element():
-    element = Element("", {}, [])
+    element = Element.empty()
     assert str(element) == ""
 
 
@@ -22,6 +22,31 @@ def test_empty_fragment():
 def test_fragment_with_text_children():
     element = Element.fragment(["Hello", "world"])
     assert str(element) == "Helloworld"
+
+
+def test_fragment_children_escape():
+    element = Element.fragment(["<script>alert('evil')</script>"])
+    assert str(element) == "&lt;script&gt;alert('evil')&lt;/script&gt;"
+
+
+def test_fragment_with_element_children():
+    element = Element.fragment(
+        [Element("p", {}, ["hello"]), Element("p", {}, ["world"])]
+    )
+    assert str(element) == "<p>hello</p><p>world</p>"
+
+
+def test_fragment_nesting():
+    fragment = Element.fragment(
+        [Element("p", {}, ["hello"]), Element("p", {}, ["world"])]
+    )
+    element = Element("div", {}, [Element("p", {}, ["wow"]), fragment])
+    assert str(element) == "<div><p>wow</p><p>hello</p><p>world</p></div>"
+
+
+def test_invalid_fragment():
+    with pytest.raises(ValueError):
+        _ = Element("", {"class": "greeting"}, [])
 
 
 def test_element_with_no_children():
@@ -57,9 +82,9 @@ def test_element_child_str_escape():
     assert str(element) == '<div>&lt;script&gt;alert("evil")&lt;/script&gt;</div>'
 
 
-#
-# Tests for html()
-#
+# ---------------------------------------------------------------------------
+# Tests for the html() template processing function
+# ---------------------------------------------------------------------------
 
 
 def test_html_empty():
@@ -102,8 +127,6 @@ def test_html_p_text_interpolation_escape():
     element = html(template)
     expected = Element("p", {}, ["<script>alert('evil')</script>"])
     assert element == expected
-    as_str = str(element)
-    assert as_str == "<p>&lt;script&gt;alert('evil')&lt;/script&gt;</p>"
 
 
 def test_html_nested_safe_text():
@@ -171,11 +194,11 @@ def test_html_many_nested_elements():
 
 
 def test_html_attribute_str_interploation():
-    cls = "greeting"
+    cls = 'gree"tin"g'
     text = "Hello, world!"
     template: Template = t"<p class={cls}>{text}</p>"
     element = html(template)
-    expected = Element("p", {"class": "greeting"}, ["Hello, world!"])
+    expected = Element("p", {"class": 'gree"tin"g'}, ["Hello, world!"])
     assert element == expected
 
 
