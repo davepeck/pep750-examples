@@ -206,11 +206,11 @@ assert str(element) == "<h1>Hello, World!</h1>"
 Tag name interpolation allows us to support a simple form of "components". For instance, we can define a `magic()` function that alters both the attributes and children of an element:
 
 ```python
-def magic(children: Sequence[Element | str], attributes: Mapping[str, str | bool]) -> Element:
+def magic(attributes: Mapping[str, str | bool], children: Sequence[Element | str]) -> Element:
     """A simple, but extremely magical, component."""
     magic_attributes = {**attributes, "data-magic": "yes"}
     magic_children = [*children, "Magic!"]
-    return Element(tag="div", attributes=magic_attributes, children=magic_children)
+    return Element("div", magic_attributes, magic_children)
 
 element = html(t"<{magic} id="wow"><b>FUN!</b></{magic}>")
 assert str(element) == '<div id="wow" data-magic="yes"><b>FUN!</b>Magic!</div>'
