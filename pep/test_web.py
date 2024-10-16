@@ -1,5 +1,4 @@
 import pytest
-from deepdiff import DeepDiff
 
 from . import Template, t
 from .web import Element, HTMLParseError, html
@@ -189,8 +188,7 @@ def test_html_many_nested_elements():
             ),
         ],
     )
-    diff = DeepDiff(element, expected)
-    assert not diff, f"Output differs:\n{diff}"
+    assert element == expected
 
 
 def test_html_attribute_str_interploation():
