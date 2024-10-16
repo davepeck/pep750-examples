@@ -31,7 +31,7 @@ def f(template: Template) -> str:
         match arg:
             case str() as s:
                 parts.append(s)
-            case Interpolation(value, _, format_spec, conv):
+            case Interpolation(value, _, conv, format_spec):
                 value = convert(value, conv)
                 value = format(value, format_spec)
                 parts.append(value)

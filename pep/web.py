@@ -39,7 +39,7 @@ def _render_attributes_mapping(mapping: Mapping[str, str | bool]) -> str:
     return " ".join(_render_attribute(key, value) for key, value in mapping.items())
 
 
-def _render_children(children: Sequence[Element | str]) -> str:
+def _render_children(children: Sequence[str | Element]) -> str:
     """Render a sequence of children."""
     parts = []
     for child in children:
@@ -72,7 +72,7 @@ class Element:
 
     tag: str  # An empty string indicates a fragment
     attributes: Mapping[str, str | bool]
-    children: Sequence["Element | str"]
+    children: Sequence["str | Element"]
 
     @classmethod
     def empty(cls) -> Element:
@@ -80,7 +80,7 @@ class Element:
         return cls("", {}, [])
 
     @classmethod
-    def fragment(cls, children: Sequence[Element | str]) -> Element:
+    def fragment(cls, children: Sequence[str | Element]) -> Element:
         """Create a fragment element (empty tag)."""
         return cls("", {}, list(children))
 
@@ -89,7 +89,7 @@ class Element:
         if self.attributes and not self.tag:
             raise ValueError("Fragments cannot have attributes, only children")
 
-    def append(self, child: Element | str) -> Element:
+    def append(self, child: str | Element) -> Element:
         """Append a child to the element."""
         return Element(self.tag, self.attributes, list(self.children) + [child])
 

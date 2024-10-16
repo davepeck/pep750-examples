@@ -26,15 +26,15 @@ from typing import Interpolation as OldVersionOfInterpolation
 from typing import Literal, Sequence
 
 
-@dataclass(frozen=True, match_args=True)
+@dataclass(frozen=True)
 class Interpolation:
     value: Any
     expr: str
-    format_spec: str = ""
     conv: Literal["a", "r", "s"] | None = None
+    format_spec: str = ""
 
 
-@dataclass(frozen=True, match_args=True)
+@dataclass(frozen=True)
 class Template:
     args: Sequence[str | Interpolation]
 
@@ -90,7 +90,7 @@ def t(*args: str | OldVersionOfInterpolation) -> Template:
                 else:
                     format_spec = arg.conv
 
-            value_interpolation = Interpolation(arg.getvalue(), arg.expr, format_spec, conv)  # type: ignore
+            value_interpolation = Interpolation(arg.getvalue(), arg.expr, conv, format_spec)  # type: ignore
             eo_args.append(value_interpolation)
             last_was_str = False
         else:

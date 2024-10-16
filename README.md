@@ -108,7 +108,7 @@ class Element:
 
     tag: str  # An empty string indicates a fragment
     attributes: Mapping[str, str | bool]
-    children: Sequence[Element | str]
+    children: Sequence[str | Element]
 
     def __str__(self) -> str:
         ...
@@ -204,7 +204,7 @@ assert str(element) == "<h1>Hello, World!</h1>"
 Tag name interpolation allows us to support a simple form of "components". For instance, we can define a `magic()` function that alters both the attributes and children of an element:
 
 ```python
-def magic(attributes: Mapping[str, str | bool], children: Sequence[Element | str]) -> Element:
+def magic(attributes: Mapping[str, str | bool], children: Sequence[str | Element]) -> Element:
     """A simple, but extremely magical, component."""
     magic_attributes = {**attributes, "data-magic": "yes"}
     magic_children = [*children, "Magic!"]
