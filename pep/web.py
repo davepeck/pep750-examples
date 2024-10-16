@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from html import escape
 from html.parser import HTMLParser
-from typing import Any, Literal, Mapping, Sequence, cast
+from typing import Any, Callable, Literal, Mapping, Sequence, cast
 
 from . import Interpolation, Template
 
@@ -22,19 +24,19 @@ def _render_str_attribute(key: str, value: str) -> str:
     return f'{key}="{escape(value, quote=True)}"'
 
 
-def _render_bool_attribute(key: str, value: bool) -> str:
+def _render_none_attribute(key: str) -> str:
     """Render a boolean attribute if it's True."""
-    return key if value else ""
+    return key
 
 
-def _render_attribute(key: str, value: str | bool) -> str:
+def _render_attribute(key: str, value: str | None) -> str:
     """Render an attribute and its value."""
     if isinstance(value, str):
         return _render_str_attribute(key, value)
-    return _render_bool_attribute(key, value)
+    return _render_none_attribute(key)
 
 
-def _render_attributes_mapping(mapping: Mapping[str, str | bool]) -> str:
+def _render_attributes_mapping(mapping: Mapping[str, str | None]) -> str:
     """Render a dictionary of attributes."""
     return " ".join(_render_attribute(key, value) for key, value in mapping.items())
 
@@ -52,7 +54,7 @@ def _render_children(children: Sequence[str | Element]) -> str:
 
 
 # ---------------------------------------------------------------------------
-# The main Element class
+# The main Element class: a "concrete" representation of an HTML element
 # ---------------------------------------------------------------------------
 
 
@@ -71,8 +73,8 @@ class Element:
     """
 
     tag: str  # An empty string indicates a fragment
-    attributes: Mapping[str, str | bool]
-    children: Sequence["str | Element"]
+    attributes: Mapping[str, str | None]
+    children: Sequence[str | Element]
 
     @classmethod
     def empty(cls) -> Element:
@@ -116,19 +118,45 @@ class Element:
 
 
 # ---------------------------------------------------------------------------
+# An "abstract" representation of an HTML element, with substitution details
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class AbstractElement:
+    """
+    Represents a not-quite-yet-concrete HTML element.
+
+    Users of the html() function will never see this, but it's a necessary
+    intermediate processing step.
+
+    This contains the tag, attributes, and children, but:
+
+    1. The tag can be a string or a callable that returns an Element.
+    2. The attributes can be a mapping or a callable that returns a mapping.
+    """
+
+    tag: str | Callable[[Mapping[str, str | None], Sequence[str | Element]], Element]
+    attributes: Mapping[str, str | None]
+    children: Sequence[str | AbstractElement]
+
+
+# ---------------------------------------------------------------------------
 # Our custom (but simple) HTML parser
 # ---------------------------------------------------------------------------
 
 
-class _Parser(HTMLParser):
+class AbstractParser(HTMLParser):
     """
-    A simple HTML parser that constructs a tree of `Element`s.
+    A simple HTML parser that constructs a tree of `AbstractElement`s.
 
     This builds on the Python standard library's HTMLParser. This is fine for
-    our example purposes, but not perfect: we have to work around some of the
-    limitations of the parser (mostly, by overriding interal methods and
-    using internal state) in order to support our desired template string
-    syntax.
+    our example purposes, but is imperfect. For example, we want to allow
+    different kinds of interpolations in different parts of the HTML start tag
+    grammar. The standard library's HTMLParser doesn't give us that level of
+    control &mdash; it waits until it has parsed the whole tag before it calls
+    `handle_starttag()` &mdash; so we have to do some hacky things to work
+    around that.
 
     A production system would need a more robust parser, but that's potentially
     a lot of work! Hopefully this is a useful starting point for thinking about
@@ -149,13 +177,7 @@ class _Parser(HTMLParser):
         if self.root is not None:
             raise HTMLParseError(f"Multiple root elements ({self.root.tag} and {tag})")
 
-        def _none_to_true(value: str | None) -> str | bool:
-            """Convert None to True for boolean attributes."""
-            # Python's HTMLParser uses None to represent boolean attributes,
-            # but that's kinda weird. Let's convert it to True.
-            return True if value is None else value
-
-        attributes = {key: _none_to_true(value) for key, value in attrs}
+        attributes = {key: value for key, value in attrs}
         element = Element(tag, attributes, [])
         self.stack.append(element)
         self.in_start_tag = False
@@ -239,7 +261,7 @@ def _process_content_interpolation(value: Any) -> str:
 
 def html(template: Template) -> Element:
     """Convert a Template to an Element."""
-    parser = _Parser()
+    parser = AbstractParser()
     for arg in template.args:
         match arg:
             case str() as s:

@@ -201,11 +201,11 @@ def test_html_attribute_str_interploation():
 
 
 def test_html_attribute_dict_interpolation():
-    attributes = {"class": "greeting", "data-foo": True}
+    attributes = {"class": "greeting", "data-foo": None}
     text = "Hello, world!"
     template: Template = t"<p {attributes}>{text}</p>"
     element = html(template)
-    expected = Element("p", {"class": "greeting", "data-foo": True}, ["Hello, world!"])
+    expected = Element("p", {"class": "greeting", "data-foo": None}, ["Hello, world!"])
     assert element == expected
 
 
