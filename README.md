@@ -1,6 +1,6 @@
 # pep750-examples
 
-This repository contains full implementations of the code examples described in [PEP 750: Template Strings](https://peps.python.org/pep-0750/). It also includes a suite of tests to make sure the examples are correct.
+This repository contains full implementations of the code examples described in [PEP 750: Template Strings](https://pep-previews--4062.org.readthedocs.build/pep-0750/). It also includes a suite of tests to make sure the examples are correct.
 
 ## Running This Code
 
@@ -51,7 +51,7 @@ assert f(templated) == formatted
 ```
 See also [the tests](./pep/test_fstring.py).
 
-This [example is described in detail](https://peps.python.org/pep-0750/#example-implementing-f-strings-with-t-strings) in PEP 750.
+This [example is described in detail](https://pep-previews--4062.org.readthedocs.build/pep-0750/#example-implementing-f-strings-with-t-strings) in PEP 750.
 
 ### Structured Logging
 
@@ -84,11 +84,11 @@ logger.info(t"User {action}: {amount:.2f} {item}")
 
 See the tests in [`test_logging.py`](./pep/test_logging.py).
 
-This [example is described in detail](https://peps.python.org/pep-0750/#example-structured-logging) in PEP 750.
+This [example is described in detail](https://pep-previews--4062.org.readthedocs.build/pep-0750/#example-structured-logging) in PEP 750.
 
 ### HTML Templating
 
-There are several short "HTML templating" examples in [PEP 750](https://peps.python.org/pep-0750/).
+There are several short "HTML templating" examples in [PEP 750](https://pep-previews--4062.org.readthedocs.build/pep-0750/).
 
 They all use a hypothetical `html()` function that parses template strings to an intermediate type, `Element`, and supports context-dependent processing of interpolations.
 
