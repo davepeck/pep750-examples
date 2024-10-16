@@ -1,8 +1,6 @@
 # pep750-examples
 
-This repository contains the code examples found in [PEP 750: Template Strings](https://peps.python.org/pep-0750/).
-
-The repository includes a suite of tests to make sure the examples are correct.
+This repository contains full versions of the code examples described in [PEP 750: Template Strings](https://peps.python.org/pep-0750/). It also includes a suite of tests to make sure the examples are correct.
 
 ## Running This Code
 
