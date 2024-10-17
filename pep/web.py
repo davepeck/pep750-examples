@@ -284,6 +284,7 @@ def html(template: Template) -> Element:
                     value = _process_start_tag_interpolation(i.value)
                 else:
                     value = i.value
+                    # Handle component interpolations
                     if callable(value):
                         components[_make_component_name(i.expr)] = value
                         value = _make_component_name(i.expr)
