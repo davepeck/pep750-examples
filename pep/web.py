@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass, field
 from html import escape
 from html.parser import HTMLParser
-from typing import Any, Callable, Literal, Mapping, Sequence, cast
+from typing import Callable, Literal, Mapping, Sequence, cast
 
 from . import Interpolation, Template
 
@@ -198,7 +198,7 @@ class HTMLTemplateParser(HTMLParser):
 # ---------------------------------------------------------------------------
 
 
-def _process_start_tag_interpolation(value: Any) -> str:
+def _process_start_tag_interpolation(value: object) -> str:
     """
     Process an interpolation value in a start tag.
 
@@ -216,7 +216,7 @@ def _process_start_tag_interpolation(value: Any) -> str:
     raise HTMLParseError(f"Unsupported start tag interpolation: {type(value)}")
 
 
-def _process_content_interpolation(value: Any) -> str:
+def _process_content_interpolation(value: object) -> str:
     """
     Process an interpolation value outside of a start tag.
 

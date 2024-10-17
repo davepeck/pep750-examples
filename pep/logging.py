@@ -38,7 +38,7 @@ class TemplateMessage:
         return f(self.template)
 
     @property
-    def values(self) -> Mapping[str, Any]:
+    def values(self) -> Mapping[str, object]:
         return {
             arg.expr: arg.value
             for arg in self.template.args
@@ -46,7 +46,7 @@ class TemplateMessage:
         }
 
     @property
-    def data(self) -> Mapping[str, Any]:
+    def data(self) -> Mapping[str, object]:
         return {"message": self.message, "values": self.values}
 
     def __str__(self) -> str:
@@ -90,7 +90,7 @@ class MessageFormatter(TemplateFormatterBase):
 
 
 class ValuesFormatter(TemplateFormatterBase):
-    def values(self, template: Template) -> Mapping[str, Any]:
+    def values(self, template: Template) -> Mapping[str, object]:
         return {
             arg.expr: arg.value
             for arg in template.args

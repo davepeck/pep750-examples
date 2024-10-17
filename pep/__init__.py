@@ -21,14 +21,13 @@ spec and the new.
 
 from dataclasses import dataclass
 from html.parser import HTMLParser
-from typing import Any
 from typing import Interpolation as OldVersionOfInterpolation
 from typing import Literal, Sequence
 
 
 @dataclass(frozen=True)
 class Interpolation:
-    value: Any
+    value: object
     expr: str
     conv: Literal["a", "r", "s"] | None = None
     format_spec: str = ""

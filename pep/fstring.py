@@ -9,12 +9,12 @@ first place.
 See also test_fstring.py
 """
 
-from typing import Any, Literal
+from typing import Literal
 
 from . import Interpolation, Template
 
 
-def convert(value: Any, conv: Literal["a", "r", "s"] | None) -> Any:
+def convert(value: object, conv: Literal["a", "r", "s"] | None) -> object:
     if conv == "a":
         return ascii(value)
     elif conv == "r":
