@@ -15,11 +15,11 @@ class HTMLParseError(Exception):
     pass
 
 
-def slugify(s):
-    slugged = (
+def _make_component_name(s):
+    cleaned = (
         re.sub(r"[-\s]+", "-", re.sub(r"[^a-zA-Z0-9\s-]", "", s)).strip("-").lower()
     )
-    return f"slug-{slugged}-slug"
+    return f"component-{cleaned}-component"
 
 
 # ---------------------------------------------------------------------------
@@ -254,6 +254,8 @@ def _invoke_components(element: Element, components: dict[str, Callable]) -> Ele
 # The main html() template processing function
 # ---------------------------------------------------------------------------
 
+# TODO we can re-structure this to be a bunch cleaner. Soon! -Dave
+
 
 def html(template: Template) -> Element:
     """
@@ -263,8 +265,8 @@ def html(template: Template) -> Element:
     intermediate representation of the HTML template that retains interpolation
     details, and then walk *that* representation to build the Element tree.
 
-    But we want to keep things simple for now, so we're going to do all the
-    fun stuff right here in this function.
+    But we want to keep things simple for this example code, so we're going to
+    do all the fun stuff right here in this function.
     """
     parser = HTMLTemplateParser()
     components: dict[str, Callable] = {}
@@ -283,8 +285,8 @@ def html(template: Template) -> Element:
                 else:
                     value = i.value
                     if callable(value):
-                        components[slugify(i.expr)] = value
-                        value = slugify(i.expr)
+                        components[_make_component_name(i.expr)] = value
+                        value = _make_component_name(i.expr)
                     # TODO what if we're in an end tag?
                     value = _process_content_interpolation(value)
                 parser.feed(value)
