@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from html import escape
 from html.parser import HTMLParser
@@ -12,6 +13,13 @@ class HTMLParseError(Exception):
     """An error occurred while parsing an HTML template."""
 
     pass
+
+
+def slugify(s):
+    slugged = (
+        re.sub(r"[-\s]+", "-", re.sub(r"[^a-zA-Z0-9\s-]", "", s)).strip("-").lower()
+    )
+    return f"slug-{slugged}-slug"
 
 
 # ---------------------------------------------------------------------------
@@ -118,37 +126,13 @@ class Element:
 
 
 # ---------------------------------------------------------------------------
-# An "abstract" representation of an HTML element, with substitution details
+# Our custom (but keep-it-simple-for-examples) HTML parser
 # ---------------------------------------------------------------------------
 
 
-@dataclass(frozen=True)
-class AbstractElement:
+class HTMLTemplateParser(HTMLParser):
     """
-    Represents a not-quite-yet-concrete HTML element.
-
-    Users of the html() function will never see this, but it's a necessary
-    intermediate processing step.
-
-    This contains the tag, attributes, and children, but:
-
-    1. The tag can be a string or a callable that returns an Element.
-    2. The attributes can be a mapping or a callable that returns a mapping.
-    """
-
-    tag: str | Callable[[Mapping[str, str | None], Sequence[str | Element]], Element]
-    attributes: Mapping[str, str | None]
-    children: Sequence[str | AbstractElement]
-
-
-# ---------------------------------------------------------------------------
-# Our custom (but simple) HTML parser
-# ---------------------------------------------------------------------------
-
-
-class AbstractParser(HTMLParser):
-    """
-    A simple HTML parser that constructs a tree of `AbstractElement`s.
+    A simple HTML parser that constructs a tree of `Element`s.
 
     This builds on the Python standard library's HTMLParser. This is fine for
     our example purposes, but is imperfect. For example, we want to allow
@@ -254,14 +238,37 @@ def _process_content_interpolation(value: Any) -> str:
     raise HTMLParseError(f"Unsupported content interpolation: {type(value)}")
 
 
+def _invoke_components(element: Element, components: dict[str, Callable]) -> Element:
+    """Recursively invoke any component functions in the Element tree."""
+    children = [
+        _invoke_components(child, components) if isinstance(child, Element) else child
+        for child in element.children
+    ]
+    if element.tag in components:
+        component = components[element.tag]
+        return component(element.attributes, children)
+    return Element(element.tag, element.attributes, children)
+
+
 # ---------------------------------------------------------------------------
 # The main html() template processing function
 # ---------------------------------------------------------------------------
 
 
 def html(template: Template) -> Element:
-    """Convert a Template to an Element."""
-    parser = AbstractParser()
+    """
+    Convert a Template to an Element.
+
+    A more sophisticated version of this function would probably create an
+    intermediate representation of the HTML template that retains interpolation
+    details, and then walk *that* representation to build the Element tree.
+
+    But we want to keep things simple for now, so we're going to do all the
+    fun stuff right here in this function.
+    """
+    parser = HTMLTemplateParser()
+    components: dict[str, Callable] = {}
+    # TODO: consider moving all of this into an overridden parser.feed() method?
     for arg in template.args:
         match arg:
             case str() as s:
@@ -274,10 +281,14 @@ def html(template: Template) -> Element:
                 if parser.in_start_tag:
                     value = _process_start_tag_interpolation(i.value)
                 else:
+                    value = i.value
+                    if callable(value):
+                        components[slugify(i.expr)] = value
+                        value = slugify(i.expr)
                     # TODO what if we're in an end tag?
-                    value = _process_content_interpolation(i.value)
+                    value = _process_content_interpolation(value)
                 parser.feed(value)
     parser.close()
     if not parser.root:
         raise HTMLParseError("No root element")
-    return parser.root
+    return _invoke_components(parser.root, components)

@@ -107,7 +107,7 @@ class Element:
     """A simple representation of an HTML element."""
 
     tag: str  # An empty string indicates a fragment
-    attributes: Mapping[str, str | bool]
+    attributes: Mapping[str, str | None]
     children: Sequence[str | Element]
 
     def __str__(self) -> str:
@@ -167,10 +167,10 @@ element = html(t'<img {attributes} />')
 assert str(element) == '<img src="shrubbery.jpg" alt="A shrubbery" />'
 ```
 
-Boolean attributes are also supported:
+Empty attributes are also supported:
 
 ```python
-attributes = {"type": "text", "required": True}
+attributes = {"type": "text", "required": None}
 element = html(t'<input {attributes} />')
 assert str(element) == '<input type="text" required />'
 ```
@@ -204,18 +204,15 @@ assert str(element) == "<h1>Hello, World!</h1>"
 Tag name interpolation allows us to support a simple form of "components". For instance, we can define a `magic()` function that alters both the attributes and children of an element:
 
 ```python
-def magic(attributes: Mapping[str, str | bool], children: Sequence[str | Element]) -> Element:
+def Magic(attributes: Mapping[str, str | None], children: Sequence[str | Element]) -> Element:
     """A simple, but extremely magical, component."""
     magic_attributes = {**attributes, "data-magic": "yes"}
     magic_children = [*children, "Magic!"]
     return Element("div", magic_attributes, magic_children)
 
-element = html(t"<{magic} id="wow"><b>FUN!</b></{magic}>")
+element = html(t'<{Magic} id="wow"><b>FUN!</b></{Magic}>')
 assert str(element) == '<div id="wow" data-magic="yes"><b>FUN!</b>Magic!</div>'
 ```
 
-The `html()` template processing code sees that `magic` is an interpolation, that it occurs in the tag position, and that its value is a `Callable`. As a result, `html()` calls `magic()` with the interpolated children and attributes and uses the result returned _by_ `magic()` as the final `Element`.
-
-**TODO** Tag function "components" aren't implemented... yet!
-
+The `html()` template processing code sees that `{Magic}` is an interpolation, that it occurs in the tag position, and that its value is a `Callable`. As a result, `html()` calls `Magic()` with the interpolated children and attributes and uses the result returned _by_ `Magic()` as the final `Element`.
 

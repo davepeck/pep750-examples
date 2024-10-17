@@ -1,3 +1,5 @@
+from typing import Mapping, Sequence
+
 import pytest
 
 from . import Template, t
@@ -214,3 +216,31 @@ def test_html_dict_interpolation_not_allowed_in_content():
     template: Template = t"<p>{attributes}</p>"
     with pytest.raises(HTMLParseError):
         element = html(template)
+
+
+def test_html_tag_interpolation():
+    tag = "p"
+    text = "Hello, world!"
+    template: Template = t"<{tag}>{text}</{tag}>"
+    element = html(template)
+    expected = Element("p", {}, ["Hello, world!"])
+    assert element == expected
+
+
+def test_html_tag_callable_interpolation():
+    def Magic(
+        attributes: Mapping[str, str | None], children: Sequence[str | Element]
+    ) -> Element:
+        """A simple, but extremely magical, component."""
+        magic_attributes = {**attributes, "data-magic": "yes"}
+        magic_children = [*children, "Magic!"]
+        return Element("div", magic_attributes, magic_children)
+
+    template: Template = t'<{Magic} id="wow"><b>FUN!</b></{Magic}>'
+    element = html(template)
+    expected = Element(
+        "div",
+        {"id": "wow", "data-magic": "yes"},
+        [Element("b", {}, ["FUN!"]), "Magic!"],
+    )
+    assert element == expected
