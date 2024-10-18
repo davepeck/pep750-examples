@@ -47,8 +47,6 @@ async def test_callable_value():
 
 # XXX this test does not yet work given the current implementation
 # of PEP750 in cpython and the implementation of t() on top of it.
-# This will change when Lysandros Nikolaou's implementation of PEP750
-# is updated to match the current spec.
 # @pytest.mark.asyncio
 # async def test_await_in_interpolation():
 #     async def value():

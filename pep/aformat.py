@@ -1,6 +1,6 @@
 import asyncio
 
-from . import Template
+from . import Interpolation, Template
 from .fstring import convert
 
 
@@ -15,15 +15,15 @@ async def aformat(template: Template) -> str:
     """
     parts = []
     for arg in template.args:
-        if isinstance(arg, str):
-            parts.append(arg)
-        else:
-            value = arg.value
-            if asyncio.iscoroutinefunction(value):
-                value = await value()
-            elif callable(value):
-                value = value()
-            value = convert(value, arg.conv)
-            value = format(value, arg.format_spec)
-            parts.append(value)
+        match arg:
+            case str() as s:
+                parts.append(s)
+            case Interpolation(value, _, conv, format_spec):
+                if asyncio.iscoroutinefunction(value):
+                    value = await value()
+                elif callable(value):
+                    value = value()
+                value = convert(value, conv)
+                value = format(value, format_spec)
+                parts.append(value)
     return "".join(parts)
