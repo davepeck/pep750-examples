@@ -51,7 +51,7 @@ class Template:
 
     __match_args__ = ("args",)
 
-    def __init__(self, args: Sequence[str | Interpolation]):
+    def __init__(self, *args: str | Interpolation):
         self.args = args
 
 
@@ -119,7 +119,7 @@ def t(*args: str | OldVersionOfInterpolation) -> Template:
     assert len(eo_args) >= 1
     assert len(eo_args) % 2 == 1
 
-    return Template(tuple(eo_args))
+    return Template(*eo_args)
 
 
 #
