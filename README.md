@@ -24,6 +24,7 @@ Python 3.14.0a0
 Congrats; you're good to go!
 
 
+
 ## A Word About the Code
 
 The current `cpython` implementation that this repository builds on top of tracks an _older_ version of PEP 750 with somewhat different syntax and semantics than the fully up-to-date PEP.
@@ -35,6 +36,14 @@ When PEP 750 lands in cpython, you'll be able to simply write a template string 
 Likewise, when PEP 750 lands, you'll be able to `from types import Template, Interpolation`. Right now, those types are _also_ defined in the `pep` module.
 
 If you're just reading the example code and tests, you probably won't have to think about this. We'll update this repository when an updated version of `cpython` is available.
+
+### Linting, formatting, etc.
+
+The included devcontainer loads [my fork of black that supports t-strings](https://github.com/davepeck/black/tree/pep750-support).
+
+`isort` is used.
+
+Tools like `mypy` and friends can't type check t-strings yet, hence the many extra `: Template` annotations sprinkled throughout the code.
 
 ## Examples
 

@@ -25,17 +25,34 @@ from typing import Interpolation as OldVersionOfInterpolation
 from typing import Literal, Sequence
 
 
-@dataclass(frozen=True)
 class Interpolation:
     value: object
     expr: str
-    conv: Literal["a", "r", "s"] | None = None
-    format_spec: str = ""
+    conv: Literal["a", "r", "s"] | None
+    format_spec: str
+
+    __match_args__ = ("value", "expr", "conv", "format_spec")
+
+    def __init__(
+        self,
+        value: object,
+        expr: str,
+        conv: Literal["a", "r", "s"] | None = None,
+        format_spec: str = "",
+    ):
+        self.value = value
+        self.expr = expr
+        self.conv = conv
+        self.format_spec = format_spec
 
 
-@dataclass(frozen=True)
 class Template:
     args: Sequence[str | Interpolation]
+
+    __match_args__ = ("args",)
+
+    def __init__(self, args: Sequence[str | Interpolation]):
+        self.args = args
 
 
 def t(*args: str | OldVersionOfInterpolation) -> Template:
