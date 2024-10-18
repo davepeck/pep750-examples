@@ -8,13 +8,13 @@ from .logging import (
     CombinedFormatter,
     MessageFormatter,
     TemplateMessage,
-    TemplateMessageMaker,
     ValuesFormatter,
+    make_template_message,
 )
 
-#
-# Tests for "Approach 1"
-#
+# -----------------------------------------------------------------------------
+# Tests for approach 1: Define a custom message type
+# -----------------------------------------------------------------------------
 
 
 def test_template_message_message():
@@ -64,15 +64,15 @@ def test_template_message_encoder():
 
 def test_template_message_maker():
     amount = Decimal("42.1")
-    maker = TemplateMessageMaker(DecimalEncoder())
+    maker = make_template_message(DecimalEncoder())
     template: Template = t"${amount:0.2f}"
     message = maker(template)
     assert str(message) == '{"message": "$42.10", "values": {"amount": "42.1"}}'
 
 
-#
-# Tests for "Approach 2"
-#
+# -----------------------------------------------------------------------------
+# Tests for approach 2: Define custom formatters
+# -----------------------------------------------------------------------------
 
 
 def test_message_formatter():

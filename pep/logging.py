@@ -1,6 +1,9 @@
 """
 Demonstrate structured logging with t-strings and Python's
 standard logging module.
+
+See the structured logging example section in PEP 750 for more
+information.
 """
 
 from json import JSONEncoder
@@ -15,17 +18,9 @@ class Encoder(Protocol):
     def encode(self, o: Any) -> str: ...
 
 
-#
-# Approach 1: Define a custom message type
-#
-
-
-class TemplateMessageMaker:
-    def __init__(self, encoder: Encoder | None = None) -> None:
-        self.encoder = encoder or JSONEncoder()
-
-    def __call__(self, template: Template) -> "TemplateMessage":
-        return TemplateMessage(template, encoder=self.encoder)
+# -----------------------------------------------------------------------------
+# Structured logging approach 1: Define a custom message type
+# -----------------------------------------------------------------------------
 
 
 class TemplateMessage:
@@ -53,15 +48,27 @@ class TemplateMessage:
         return self.encoder.encode(self.data)
 
 
-#
-# Approach 2: Define custom formatters
-#
+def make_template_message(encoder: Encoder | None = None):
+    """Utility function to create a new message class with a consistent encoder."""
+
+    def _make(template: Template) -> TemplateMessage:
+        return TemplateMessage(template, encoder)
+
+    return _make
 
 
+# -----------------------------------------------------------------------------
+# Structured logging approach 2: define custom formatters
+# -----------------------------------------------------------------------------
+
+
+# This type is not publicly available from the `logging` module.
 type FormatStyle = Literal["%", "{", "$"]
 
 
 class TemplateFormatterBase(Formatter):
+    """Base class for formatters that use Templates for structured logging."""
+
     encoder: Encoder
 
     def __init__(
@@ -79,6 +86,8 @@ class TemplateFormatterBase(Formatter):
 
 
 class MessageFormatter(TemplateFormatterBase):
+    """A formatter that formats a human-readable message from a Template."""
+
     def message(self, template: Template) -> str:
         return f(template)
 
@@ -90,6 +99,8 @@ class MessageFormatter(TemplateFormatterBase):
 
 
 class ValuesFormatter(TemplateFormatterBase):
+    """A formatter that formats structured output from a Template's values."""
+
     def values(self, template: Template) -> Mapping[str, object]:
         return {
             arg.expr: arg.value
@@ -105,6 +116,8 @@ class ValuesFormatter(TemplateFormatterBase):
 
 
 class CombinedFormatter(MessageFormatter, ValuesFormatter):
+    """A formatter that formats both a human-readable message and structured output."""
+
     def format(self, record: LogRecord) -> str:
         msg = record.msg
         if not isinstance(msg, Template):

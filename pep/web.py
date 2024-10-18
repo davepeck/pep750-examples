@@ -1,3 +1,19 @@
+"""
+Implement a simple HTML templating system using Template strings.
+
+Our goal here is *not* to implement a robust or production-quality HTML
+templating system. Instead, it's to provide a hopefully relatively simple
+example of how template string processing code will work in more complex
+cases where parsing is needed.
+
+Because this is example code, we limit the set of HTML features we support;
+we can imagine a *lot* of additional features that a more complete system
+would ideally support.
+
+We also attempt to avoid using external libraries, or parsing to multiple
+intermediate representations, to keep the code as simple as possible.
+"""
+
 from __future__ import annotations
 
 import re
@@ -13,13 +29,6 @@ class HTMLParseError(Exception):
     """An error occurred while parsing an HTML template."""
 
     pass
-
-
-def _make_component_name(s):
-    cleaned = (
-        re.sub(r"[-\s]+", "-", re.sub(r"[^a-zA-Z0-9\s-]", "", s)).strip("-").lower()
-    )
-    return f"component-{cleaned}-component"
 
 
 # ---------------------------------------------------------------------------
@@ -250,11 +259,20 @@ def _invoke_components(element: Element, components: dict[str, Callable]) -> Ele
     return Element(element.tag, element.attributes, children)
 
 
+def _make_component_name(expr: str) -> str:
+    """Convert an expr into a component name safe for use in HTML."""
+    # This is basically a specialized slugify function
+    cleaned = (
+        re.sub(r"[-\s]+", "-", re.sub(r"[^a-zA-Z0-9\s-]", "", expr)).strip("-").lower()
+    )
+    return f"component-{cleaned}-component"
+
+
 # ---------------------------------------------------------------------------
 # The main html() template processing function
 # ---------------------------------------------------------------------------
 
-# TODO we can re-structure this to be a bunch cleaner. Soon! -Dave
+# TODO we should re-structure this to be a bunch cleaner. Soon! -Dave
 
 
 def html(template: Template) -> Element:
@@ -269,7 +287,12 @@ def html(template: Template) -> Element:
     do all the fun stuff right here in this function.
     """
     parser = HTMLTemplateParser()
+
+    # Keep track of component invocations. We'll feed a "slugified" version of
+    # the component's expression to the parser, and then replace the slug with
+    # an actual component invocation when we're done.
     components: dict[str, Callable] = {}
+
     # TODO: consider moving all of this into an overridden parser.feed() method?
     for arg in template.args:
         match arg:
