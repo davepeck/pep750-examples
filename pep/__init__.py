@@ -62,14 +62,12 @@ class Template:
     __match_args__ = ("args",)
 
     def __init__(self, *args: str | Interpolation):
-        self.args = args
+        self.args = tuple(args)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Template):
             return NotImplemented
-        if len(self.args) != len(other.args):
-            return False
-        return all(a == b for a, b in zip(self.args, other.args))
+        return self.args == other.args
 
     def __add__(self, other: object) -> Template:
         assert isinstance(self.args[-1], str)
