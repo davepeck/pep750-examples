@@ -54,6 +54,21 @@ class Template:
     def __init__(self, *args: str | Interpolation):
         self.args = args
 
+    def __add__(self, other: object) -> Template:
+        assert isinstance(self.args[-1], str)
+        if isinstance(other, str):
+            return Template(*self.args[:-1], self.args[-1] + other)
+        if not isinstance(other, Template):
+            return NotImplemented
+        assert isinstance(other.args[0], str)
+        return Template(*self.args[:-1], self.args[-1] + other.args[0], *other.args[1:])
+
+    def __radd__(self, other: object) -> Template:
+        if not isinstance(other, str):
+            return NotImplemented
+        assert isinstance(self.args[0], str)
+        return Template(other + self.args[0], *self.args[1:])
+
 
 def t(*args: str | OldVersionOfInterpolation) -> Template:
     """

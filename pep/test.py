@@ -72,3 +72,88 @@ def test_format_spec_and_conv():
     assert template.args[1].value == 42
     assert template.args[1].conv == "r"
     assert template.args[1].format_spec == "04d"
+
+
+def test_add_template_str():
+    template = t"hello" + "world"
+    assert isinstance(template, Template)
+    assert len(template.args) == 1
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "hello" + "world"
+
+
+def test_add_template_str_2():
+    name = "world"
+    template = t"hello {name}!" + " how are you?"
+    assert isinstance(template, Template)
+    assert len(template.args) == 3
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "hello "
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == name
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == "!" + " how are you?"
+
+
+def test_add_template_template():
+    template = t"hello" + t"world"
+    assert isinstance(template, Template)
+    assert len(template.args) == 1
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "hello" + "world"
+
+
+def test_add_template_template_2():
+    name = "world"
+    other = "you"
+    template = t"hello {name}!" + t" how are {other}?"
+    assert isinstance(template, Template)
+    assert len(template.args) == 5
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "hello "
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == name
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == "!" + " how are "
+    assert isinstance(template.args[3], Interpolation)
+    assert template.args[3].value == other
+    assert isinstance(template.args[4], str)
+    assert template.args[4] == "?"
+
+
+def test_add_str_template():
+    template = "hello" + t"world"
+    assert isinstance(template, Template)
+    assert len(template.args) == 1
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "hello" + "world"
+
+
+def test_add_str_template_2():
+    name = "world"
+    template = "hello " + t"there, {name}!"
+    assert isinstance(template, Template)
+    assert len(template.args) == 3
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "hello " + "there, "
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == name
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == "!"
+
+
+# This is not supported with the current branch of cpython
+# def test_implicit_concat_str_template():
+#     template = "hello" t"world"
+#     assert isinstance(template, Template)
+#     assert len(template.args) == 1
+#     assert isinstance(template.args[0], str)
+#     assert template.args[0] == "hello" + "world"
+
+# Nor is this
+# def test_implicit_concat_template_str():
+#     template = t"hello" "world"
+#     assert isinstance(template, Template)
+#     assert len(template.args) == 1
+#     assert isinstance(template.args[0], str)
+#     assert template.args[0] == "hello" + "world"
