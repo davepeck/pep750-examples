@@ -45,6 +45,12 @@ async def test_callable_value():
     assert await aformat(template) == "42.00"
 
 
+@pytest.mark.asyncio
+async def test_lambda_value():
+    template: Template = t"{(lambda: 42):.2f}"
+    assert await aformat(template) == "42.00"
+
+
 # XXX this test does not yet work given the current implementation
 # of PEP750 in cpython and the implementation of t() on top of it.
 # @pytest.mark.asyncio
