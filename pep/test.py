@@ -5,7 +5,7 @@ fork of cpython, and partially in the __init__.py in this repository, works.
 See the __init__.py for a more detailed explanation.
 """
 
-from . import Interpolation, Template, t
+from . import Interpolation, Template, _interleave, t
 
 
 def test_empty():
@@ -184,3 +184,48 @@ def test_template_eq_5():
 
 def test_template_eq_6():
     assert t"hello {42}" + "!" == t"hello {42}!"
+
+
+def test_template_eq_7():
+    assert t"{42}" + t"{99}" == t"{42}{99}"
+
+
+def test_interleave_empty():
+    assert _interleave() == ("",)
+
+
+def test_interleave_simple():
+    assert _interleave("hello") == ("hello",)
+
+
+def test_interleave_interpolation():
+    i1 = Interpolation(42, "i1", None, "")
+    assert _interleave(i1) == ("", i1, "")
+
+
+def test_interleave_neighboring_interpolations():
+    i1 = Interpolation(42, "i1", None, "")
+    i2 = Interpolation(99, "i2", None, "")
+    assert _interleave(i1, i2) == ("", i1, "", i2, "")
+
+
+def test_interleave_neighboring_strings():
+    assert _interleave("hello", "world") == ("helloworld",)
+
+
+def test_interleave_all_the_things():
+    i1 = Interpolation(42, "i1", None, "")
+    i2 = Interpolation(99, "i2", None, "")
+    i3 = Interpolation(100, "i3", None, "")
+    i4 = Interpolation(101, "i4", None, "")
+    assert _interleave("hello", "there", i1, i2, "wow", "neat", i3, i4) == (
+        "hellothere",
+        i1,
+        "",
+        i2,
+        "wowneat",
+        i3,
+        "",
+        i4,
+        "",
+    )

@@ -62,7 +62,7 @@ class Template:
     __match_args__ = ("args",)
 
     def __init__(self, *args: str | Interpolation):
-        self.args = tuple(args)
+        self.args = _interleave(*args)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Template):
@@ -72,17 +72,45 @@ class Template:
     def __add__(self, other: object) -> Template:
         assert isinstance(self.args[-1], str)
         if isinstance(other, str):
-            return Template(*self.args[:-1], self.args[-1] + other)
-        if not isinstance(other, Template):
-            return NotImplemented
-        assert isinstance(other.args[0], str)
-        return Template(*self.args[:-1], self.args[-1] + other.args[0], *other.args[1:])
+            return Template(*self.args, other)
+        if isinstance(other, Template):
+            return Template(*self.args, *other.args)
+        return NotImplemented
 
     def __radd__(self, other: object) -> Template:
-        if not isinstance(other, str):
-            return NotImplemented
-        assert isinstance(self.args[0], str)
-        return Template(other + self.args[0], *self.args[1:])
+        if isinstance(other, str):
+            return Template(other, *self.args)
+        return NotImplemented
+
+
+def _interleave(*args: str | Interpolation) -> tuple[str | Interpolation]:
+    """
+    Ensure that every other element is a string.
+
+    If necessary, insert an empty string between two interpolations, or at the
+    beginning or end of the sequence.
+
+    If necessary, concatenate two adjacent strings.
+    """
+    new_args = []
+    last_was_str = False
+    for arg in args:
+        if isinstance(arg, str):
+            if last_was_str:
+                new_args[-1] += arg
+            else:
+                new_args.append(arg)
+            last_was_str = True
+        elif isinstance(arg, Interpolation):
+            if not last_was_str:
+                new_args.append("")
+            new_args.append(arg)
+            last_was_str = False
+        else:
+            raise TypeError(f"unexpected type: {type(arg)}")
+    if not last_was_str:
+        new_args.append("")
+    return tuple(new_args)
 
 
 def t(*args: str | OldVersionOfInterpolation) -> Template:

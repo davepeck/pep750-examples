@@ -51,6 +51,17 @@ async def test_lambda_value():
     assert await aformat(template) == "42.00"
 
 
+@pytest.mark.asyncio
+async def test_lambda_unbound():
+    template: Template = t"{(lambda: name)}"
+
+    async def reuse(name: str) -> str:
+        return await aformat(template)
+
+    with pytest.raises(NameError):
+        await reuse("nope")
+
+
 # XXX this test does not yet work given the current implementation
 # of PEP750 in cpython and the implementation of t() on top of it.
 # @pytest.mark.asyncio
