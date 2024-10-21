@@ -45,6 +45,16 @@ class Interpolation:
         self.conv = conv
         self.format_spec = format_spec
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Interpolation):
+            return NotImplemented
+        return (
+            self.value == other.value
+            and self.expr == other.expr
+            and self.conv == other.conv
+            and self.format_spec == other.format_spec
+        )
+
 
 class Template:
     args: Sequence[str | Interpolation]
@@ -53,6 +63,13 @@ class Template:
 
     def __init__(self, *args: str | Interpolation):
         self.args = args
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Template):
+            return NotImplemented
+        if len(self.args) != len(other.args):
+            return False
+        return all(a == b for a, b in zip(self.args, other.args))
 
     def __add__(self, other: object) -> Template:
         assert isinstance(self.args[-1], str)

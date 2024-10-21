@@ -157,3 +157,30 @@ def test_add_str_template_2():
 #     assert len(template.args) == 1
 #     assert isinstance(template.args[0], str)
 #     assert template.args[0] == "hello" + "world"
+
+
+def test_template_eq_1():
+    assert t"hello" == t"hello"
+
+
+def test_template_eq_2():
+    assert t"hello" != t"world"
+
+
+def test_template_eq_3():
+    planet = "earth"
+    assert t"hello {planet}" == t"hello {planet}"
+
+
+def test_template_eq_4():
+    planet = "earth"
+    satellite = "moon"
+    assert t"hello {planet}" != t"hello {satellite}"
+
+
+def test_template_eq_5():
+    assert "hello" + t" {42}" == t"hello {42}"
+
+
+def test_template_eq_6():
+    assert t"hello {42}" + "!" == t"hello {42}!"
