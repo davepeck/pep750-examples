@@ -26,7 +26,7 @@ _MISSING_IMPLICIT_CONCAT = True
 _INCORRECT_INIT_ARGS = True
 """True if the cpython prototype doesn't have the correct __init__ arguments."""
 
-_BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE = True
+_BUG_SINGLE_INTERPOLATION = True
 """True if the cpython prototype evaluates `t"{42}"` as Interpolation(...), not Template."""
 
 _BUG_INTERPOLATION_MATCH_ARGS = True

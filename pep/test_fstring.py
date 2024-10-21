@@ -8,12 +8,12 @@ from templatelib import Template
 from . import (
     _BUG_CONSTANT_TEMPLATE,
     _BUG_INTERPOLATION_MATCH_ARGS,
-    _BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE,
+    _BUG_SINGLE_INTERPOLATION,
 )
 from .fstring import f
 
 # TODO: replace all instances of *** with "" once both
-# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE are False
+# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION are False
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
@@ -29,7 +29,7 @@ def test_simple():
 
 
 @pytest.mark.skipif(
-    _BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE,
+    _BUG_SINGLE_INTERPOLATION,
     reason="Single interpolation outside of template bug",
 )
 def test_only_interpolation():

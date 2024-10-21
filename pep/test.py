@@ -16,7 +16,7 @@ from . import (
 )
 
 # TODO: replace all instances of *** with "" once both
-# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE are False
+# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION are False
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")

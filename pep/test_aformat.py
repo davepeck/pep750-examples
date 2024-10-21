@@ -14,7 +14,7 @@ from .fstring import f
 
 
 # TODO: replace all instances of *** with "" once both
-# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE are False
+# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION are False
 
 
 @pytest.mark.asyncio
