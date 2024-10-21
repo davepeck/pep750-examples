@@ -10,7 +10,8 @@ from json import JSONEncoder
 from logging import Formatter, LogRecord
 from typing import Any, Literal, Mapping, Protocol
 
-from . import Interpolation, Template, t
+from templatelib import Interpolation, Template
+
 from .fstring import f
 
 

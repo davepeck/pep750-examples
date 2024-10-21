@@ -22,7 +22,7 @@ from html import escape
 from html.parser import HTMLParser
 from typing import Callable, Literal, Mapping, Sequence, cast
 
-from . import Interpolation, Template
+from templatelib import Interpolation, Template
 
 
 class HTMLParseError(Exception):

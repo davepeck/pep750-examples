@@ -5,21 +5,35 @@ fork of cpython, and partially in the __init__.py in this repository, works.
 See the __init__.py for a more detailed explanation.
 """
 
-from . import Interpolation, Template, _interleave, t
+import pytest
+from templatelib import Interpolation, Template
+
+from . import (
+    _BUG_CONSTANT_TEMPLATE,
+    _MISSING_INTERLEAVING,
+    _MISSING_TEMPLATE_ADD_RADD,
+    _MISSING_TEMPLATE_EQ,
+)
+
+# TODO: replace all instances of *** with "" once both
+# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION_OUTSIDE_OF_TEMPLATE are False
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
 def test_empty():
     template = t""
     assert isinstance(template, Template)
     assert template.args == ("",)
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
 def test_simple():
     template = t"hello"
     assert isinstance(template, Template)
     assert template.args == ("hello",)
 
 
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_only_interpolation():
     template = t"{42}"
     assert isinstance(template, Template)
@@ -50,7 +64,7 @@ def test_mixed():
 
 
 def test_conv():
-    template = t"{42!a}"
+    template = t"***{42!a}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
@@ -58,7 +72,7 @@ def test_conv():
 
 
 def test_format_spec():
-    template = t"{42:04d}"
+    template = t"***{42:04d}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
@@ -66,7 +80,7 @@ def test_format_spec():
 
 
 def test_format_spec_and_conv():
-    template = t"{42!r:04d}"
+    template = t"***{42!r:04d}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
@@ -74,6 +88,7 @@ def test_format_spec_and_conv():
     assert template.args[1].format_spec == "04d"
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
 def test_add_template_str():
     template = t"hello" + "world"
     assert isinstance(template, Template)
@@ -82,6 +97,9 @@ def test_add_template_str():
     assert template.args[0] == "hello" + "world"
 
 
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_ADD_RADD, reason="Template add/radd not implemented"
+)
 def test_add_template_str_2():
     name = "world"
     template = t"hello {name}!" + " how are you?"
@@ -95,6 +113,7 @@ def test_add_template_str_2():
     assert template.args[2] == "!" + " how are you?"
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
 def test_add_template_template():
     template = t"hello" + t"world"
     assert isinstance(template, Template)
@@ -103,6 +122,9 @@ def test_add_template_template():
     assert template.args[0] == "hello" + "world"
 
 
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_ADD_RADD, reason="Template add/radd not implemented"
+)
 def test_add_template_template_2():
     name = "world"
     other = "you"
@@ -121,6 +143,7 @@ def test_add_template_template_2():
     assert template.args[4] == "?"
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
 def test_add_str_template():
     template = "hello" + t"world"
     assert isinstance(template, Template)
@@ -129,6 +152,9 @@ def test_add_str_template():
     assert template.args[0] == "hello" + "world"
 
 
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_ADD_RADD, reason="Template add/radd not implemented"
+)
 def test_add_str_template_2():
     name = "world"
     template = "hello " + t"there, {name}!"
@@ -142,7 +168,7 @@ def test_add_str_template_2():
     assert template.args[2] == "!"
 
 
-# This is not supported with the current branch of cpython
+# Implicit concat syntax is not supported whatsoever in the current PEP 750
 # def test_implicit_concat_str_template():
 #     template = "hello" t"world"
 #     assert isinstance(template, Template)
@@ -150,7 +176,7 @@ def test_add_str_template_2():
 #     assert isinstance(template.args[0], str)
 #     assert template.args[0] == "hello" + "world"
 
-# Nor is this
+
 # def test_implicit_concat_template_str():
 #     template = t"hello" "world"
 #     assert isinstance(template, Template)
@@ -159,73 +185,42 @@ def test_add_str_template_2():
 #     assert template.args[0] == "hello" + "world"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_1():
     assert t"hello" == t"hello"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_2():
     assert t"hello" != t"world"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_3():
     planet = "earth"
     assert t"hello {planet}" == t"hello {planet}"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_4():
     planet = "earth"
     satellite = "moon"
     assert t"hello {planet}" != t"hello {satellite}"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_ADD_RADD, reason="Template add/radd not implemented"
+)
 def test_template_eq_5():
     assert "hello" + t" {42}" == t"hello {42}"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_6():
     assert t"hello {42}" + "!" == t"hello {42}!"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_7():
     assert t"{42}" + t"{99}" == t"{42}{99}"
-
-
-def test_interleave_empty():
-    assert _interleave() == ("",)
-
-
-def test_interleave_simple():
-    assert _interleave("hello") == ("hello",)
-
-
-def test_interleave_interpolation():
-    i1 = Interpolation(42, "i1", None, "")
-    assert _interleave(i1) == ("", i1, "")
-
-
-def test_interleave_neighboring_interpolations():
-    i1 = Interpolation(42, "i1", None, "")
-    i2 = Interpolation(99, "i2", None, "")
-    assert _interleave(i1, i2) == ("", i1, "", i2, "")
-
-
-def test_interleave_neighboring_strings():
-    assert _interleave("hello", "world") == ("helloworld",)
-
-
-def test_interleave_all_the_things():
-    i1 = Interpolation(42, "i1", None, "")
-    i2 = Interpolation(99, "i2", None, "")
-    i3 = Interpolation(100, "i3", None, "")
-    i4 = Interpolation(101, "i4", None, "")
-    assert _interleave("hello", "there", i1, i2, "wow", "neat", i3, i4) == (
-        "hellothere",
-        i1,
-        "",
-        i2,
-        "wowneat",
-        i3,
-        "",
-        i4,
-        "",
-    )
