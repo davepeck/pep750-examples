@@ -95,6 +95,16 @@ See the tests in [`test_logging.py`](./pep/test_logging.py).
 
 This [example is described in detail](https://pep-previews--4062.org.readthedocs.build/pep-0750/#example-structured-logging) in PEP 750.
 
+
+### Late binding of template values
+
+Like f-strings, t-string interpolations are eagerly evaluated. There's no "true" way to directly achieve late binding.
+
+That said, t-strings are flexible enough to allow for some fun hacks. In particular, we can define a `Binder` class that can be used to "bind" a template string to a set of values _after_ the template string has been created:
+
+```python
+
+
 ### HTML Templating
 
 There are several short "HTML templating" examples in [PEP 750](https://pep-previews--4062.org.readthedocs.build/pep-0750/).
