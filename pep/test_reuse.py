@@ -3,19 +3,16 @@ from .reuse import Binder, Formatter
 
 
 def test_formatter():
-    template: Template = t"This is a {'thing'} with value {'value':.2f}"
+    template: Template = t"The {'cheese'} costs ${'amount':,.2f}"
     formatter = Formatter(template)
-    assert formatter.format(thing="pi", value=3.14159) == "This is a pi with value 3.14"
-    assert (
-        formatter.format(thing="cookie", value=42)
-        == "This is a cookie with value 42.00"
-    )
+    formatted = formatter.format(cheese="Roquefort", amount=15.7)
+    assert formatted == "The Roquefort costs $15.70"
 
 
 def test_binder():
-    template: Template = t"This is a {'thing'} with value {'value':.2f}"
+    template: Template = t"The {'cheese'} costs ${'amount':,.2f}"
     binder = Binder(template)
-    bound = binder.bind(thing="pi", value=3.14159)
-    thing = "pi"
-    value = 3.14159
-    assert bound == t"This is a {thing} with value {value:.2f}"
+    bound = binder.bind(cheese="Roquefort", amount=15.7)
+    cheese = "Roquefort"
+    amount = 15.7
+    assert bound == t"The {cheese} costs ${amount:,.2f}"
