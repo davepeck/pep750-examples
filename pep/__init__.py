@@ -8,8 +8,11 @@ from html.parser import HTMLParser
 
 # When these go to False, we can remove 'em.
 
-_BUG_CONSTANT_TEMPLATE = True
+_BUG_CONSTANT_TEMPLATE = False  # 🎉
 """True if constant templates are turned into Constant in the cpython prototype."""
+
+_BUG_SINGLE_INTERPOLATION = False  # 🎉
+"""True if the cpython prototype evaluates `t"{42}"` as Interpolation(...), not Template."""
 
 _MISSING_TEMPLATE_ADD_RADD = True
 """True if the cpython prototype is missing __add__ and __radd__ for Template."""
@@ -25,9 +28,6 @@ _MISSING_IMPLICIT_CONCAT = True
 
 _INCORRECT_INIT_ARGS = True
 """True if the cpython prototype doesn't have the correct __init__ arguments."""
-
-_BUG_SINGLE_INTERPOLATION = True
-"""True if the cpython prototype evaluates `t"{42}"` as Interpolation(...), not Template."""
 
 _BUG_INTERPOLATION_MATCH_ARGS = True
 """True if the cpython prototype doesn't match the PEP 750 spec for Interpolation.__match_args__."""

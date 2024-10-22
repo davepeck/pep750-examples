@@ -21,10 +21,11 @@ from . import (
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_empty():
     template = t""
     assert isinstance(template, Template)
-    assert template.args == ("",)
+    assert template.args == ("",)  # This will fail if interleaving is not implemented
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
@@ -90,11 +91,11 @@ def test_format_spec_and_conv():
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_add_template_str():
     template = t"hello" + "world"
     assert isinstance(template, Template)
-    assert len(template.args) == 1
-    assert isinstance(template.args[0], str)
+    assert len(template.args) == 1, f"len(template.args) == {len(template.args)}"
     assert template.args[0] == "hello" + "world"
 
 
@@ -115,6 +116,7 @@ def test_add_template_str_2():
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_add_template_template():
     template = t"hello" + t"world"
     assert isinstance(template, Template)
@@ -145,6 +147,7 @@ def test_add_template_template_2():
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_add_str_template():
     template = "hello" + t"world"
     assert isinstance(template, Template)
