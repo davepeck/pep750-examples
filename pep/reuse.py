@@ -7,7 +7,8 @@ behavior, where we can build up a template and then apply it to multiple
 values?
 """
 
-from . import Interpolation, Template
+from templatelib import Interpolation, Template
+
 from .fstring import convert
 
 
@@ -74,4 +75,5 @@ class Binder:
                     value, expr, t_arg.conv, t_arg.format_spec
                 )
                 args.append(interpolation)
-        return Template(*args)
+        # TODO: change this to *args when cpython/tagstr is updated to match PEP 750
+        return Template(tuple(args))
