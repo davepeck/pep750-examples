@@ -22,7 +22,7 @@ def format_some(selector: str, template: Template, ignored: str = "***") -> str:
             parts.append(t_arg)
         else:
             if t_arg.format_spec == selector:
-                value = t_arg.value()
+                value = t_arg.value
                 if callable(value):
                     value = value()
                 value = convert(value, t_arg.conv)
