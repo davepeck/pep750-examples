@@ -12,7 +12,7 @@ from . import (
     _BUG_CONSTANT_TEMPLATE,
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
-    _MISSING_TEMPLATE_EQ,
+    _MISSING_TEMPLATE_EQ, _BUG_DEBUG_SPECIFIER,
 )
 
 # TODO: replace all instances of *** with "" once both
@@ -224,3 +224,18 @@ def test_template_eq_6():
 @pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_7():
     assert t"{42}" + t"{99}" == t"{42}{99}"
+
+
+# @pytest.mark.skipif(_BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented")
+# def test_template_debug_specifier():
+#     name = "World"
+#     template = t"Hello {name=}"
+#     assert template.args[0] == "Hello name="
+#     assert template.args[1].value == "World"
+
+
+def test_template_raw_template_strings_1():
+    trade = 'shrubberies'
+    t = rt'Did you say "{trade}"?\n'
+    assert t.args[0] == r'Did you say "'
+    assert t.args[2] == r'"?\n'

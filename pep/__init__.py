@@ -32,6 +32,8 @@ _BUG_SINGLE_INTERPOLATION = True
 _BUG_INTERPOLATION_MATCH_ARGS = True
 """True if the cpython prototype doesn't match the PEP 750 spec for Interpolation.__match_args__."""
 
+_BUG_DEBUG_SPECIFIER = True
+"""True if the cpython prototype doesn't match the PEP 750 spec for debug specifier."""
 
 #
 # Debug utilities -- useful when developing some of these examples
