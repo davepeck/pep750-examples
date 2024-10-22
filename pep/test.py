@@ -12,7 +12,7 @@ from . import (
     _BUG_CONSTANT_TEMPLATE,
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
-    _MISSING_TEMPLATE_EQ, _BUG_DEBUG_SPECIFIER,
+    _MISSING_TEMPLATE_EQ,
 )
 
 # TODO: replace all instances of *** with "" once both
@@ -235,7 +235,7 @@ def test_template_eq_7():
 
 
 def test_template_raw_template_strings_1():
-    trade = 'shrubberies'
+    trade = "shrubberies"
     t = rt'Did you say "{trade}"?\n'
     assert t.args[0] == r'Did you say "'
     assert t.args[2] == r'"?\n'
