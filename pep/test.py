@@ -233,6 +233,7 @@ def test_template_eq_7():
 #     template = t"Hello {name=}"
 #     assert template.args[0] == "Hello name="
 #     assert template.args[1].value == "World"
+#     assert template.args[1].conv == "r"
 
 
 def test_template_raw_template_strings_1():

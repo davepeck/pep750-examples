@@ -1,4 +1,4 @@
-import asyncio
+import inspect
 
 from templatelib import Template
 
@@ -22,7 +22,7 @@ async def aformat(template: Template) -> str:
             parts.append(arg)
         else:
             value = arg.value
-            if asyncio.iscoroutinefunction(value):
+            if inspect.iscoroutinefunction(value):
                 value = await value()
             elif callable(value):
                 value = value()
