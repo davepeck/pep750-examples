@@ -10,6 +10,7 @@ from templatelib import Interpolation, Template
 
 from . import (
     _BUG_CONSTANT_TEMPLATE,
+    _INCORRECT_SYNTAX_ERROR_MESSAGE,
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
     _MISSING_TEMPLATE_EQ,
@@ -239,3 +240,16 @@ def test_template_raw_template_strings_1():
     t = rt'Did you say "{trade}"?\n'
     assert t.args[0] == r'Did you say "'
     assert t.args[2] == r'"?\n'
+
+
+@pytest.mark.skipif(
+    _INCORRECT_SYNTAX_ERROR_MESSAGE,
+    reason="Template syntax error message not implemented",
+)
+def test_syntax_error_1():
+    with pytest.raises(
+        SyntaxError, match="t-string: valid expression required before '}'"
+    ):
+        # Use exec to avoid syntax error in the test itself
+        exec('t"hello {}"')
+        # Now, we got "f-string: valid expression required before '}'"
