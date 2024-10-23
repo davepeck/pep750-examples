@@ -12,6 +12,7 @@ from . import (
     _BUG_CONSTANT_TEMPLATE,
     _BUG_DEBUG_SPECIFIER,
     _BUG_NESTED_FORMAT_SPEC,
+    _BUG_TEMPLATE_CONSTRUCTOR,
     _INCORRECT_SYNTAX_ERROR_MESSAGE,
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
@@ -464,3 +465,52 @@ def test_empty_template_with_whitespace():
     assert len(template.args) == 1
     assert isinstance(template.args[0], str)
     assert template.args[0] == "   "
+
+
+@pytest.mark.skipif(
+    _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"
+)
+def test_template_constructor_interleaving():
+    """Test that Template constructor correctly interleaves strings and interpolations"""
+    # Create interpolations
+    name = "World"
+    greeting = "Hello"
+    interp1 = Interpolation(greeting, "greeting")
+    interp2 = Interpolation(name, "name")
+
+    # Test different ordering patterns
+    template1 = Template("", interp1, " ", interp2, "!")
+    template2 = Template(interp1, " ", interp2, "!")  # No leading string
+    template3 = Template("", interp1, interp2, "!")  # No string between interpolations
+
+    # All should result in the same interleaved pattern
+    expected_args = ("", interp1, " ", interp2, "!")
+    assert template1.args == expected_args
+    assert template2.args == expected_args
+    assert template3.args == expected_args
+
+
+@pytest.mark.skipif(
+    _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"
+)
+def test_template_constructor_with_only_interpolations():
+    """Test Template constructor with only interpolations"""
+    x = Interpolation(1, "1")
+    y = Interpolation(2, "2")
+    template = Template(x, y)
+    assert len(template.args) == 5
+    assert template.args[0] == ""
+    assert template.args[1] is x
+    assert template.args[2] == ""
+    assert template.args[3] is y
+    assert template.args[4] == ""
+
+
+@pytest.mark.skipif(
+    _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"
+)
+def test_template_constructor_with_only_strings():
+    """Test Template constructor with only strings"""
+    template = Template("Hello", " ", "World")
+    assert len(template.args) == 1
+    assert template.args[0] == "Hello World"
