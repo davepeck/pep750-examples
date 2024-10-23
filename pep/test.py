@@ -320,6 +320,15 @@ def test_template_hash_fails_if_values_are_not_hashable():
 #     assert hash(t"hello {planet}") != hash(t"hello {satellite}")
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_6():
+    tup = (1, 2, 3)
+    try:
+        hash(t"Tuple: {tup}")
+    except TypeError:
+        pytest.fail("Should not raise TypeError for hashable values")
+
+
 @pytest.mark.skipif(
     _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
 )
@@ -529,3 +538,28 @@ async def test_await_in_interpolation():
     template = t"Value: {await get_value()}"
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
+def test_template_equality_with_different_expr():
+    """Test that templates with same values but different expressions are not equal"""
+    x = 1
+    y = 1
+    template1 = t"{x}"
+    template2 = t"{y}"
+    # Even though values are equal, expressions are different
+    assert template1 != template2
+
+
+def test_template_multiline_string_whitespace():
+    """Test whitespace handling in multiline template strings"""
+    value = 42
+    template = t"""
+        First line
+        {value}
+            Indented line
+    """
+    assert isinstance(template, Template)
+    assert len(template.args) == 3
+    assert template.args[0].startswith("\n")
+    assert "    Indented line" in template.args[2]
