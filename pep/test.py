@@ -191,6 +191,75 @@ def test_add_str_template_2():
     assert template.args[2] == "!"
 
 
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_interleaving_empty():
+    """Test probably the most interesting corner case with interleaving."""
+    # The PEP 750 specification requires that `Template.args` contains
+    # one more string than interpolations. If there are no interpolations,
+    # we must therefore have one empty string in `Template.args`.
+    template = Template()
+    expected = ("",)
+    assert tuple(template.args) == expected
+
+
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_interleaving_single_string():
+    template = Template("hello")
+    expected = ("hello",)
+    assert tuple(template.args) == ("hello",)
+
+
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_interleaving_neighboring_strings():
+    template = Template("hello", "world")
+    expected = ("helloworld",)
+    assert tuple(template.args) == expected
+
+
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_interleaving_single_interpolation():
+    i1 = Interpolation(42, "i1", None, "")
+    template = Template(i1)
+    expected = ("", i1, "")
+    assert tuple(template.args) == expected
+
+
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_interleaving_neighboring_interpolations():
+    i1 = Interpolation(42, "i1", None, "")
+    i2 = Interpolation(99, "i2", None, "")
+    template = Template(i1, i2)
+    expected = ("", i1, "", i2, "")
+    assert tuple(template.args) == expected
+
+
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_interleave_all_the_things():
+    i1 = Interpolation(42, "i1", None, "")
+    i2 = Interpolation(99, "i2", None, "")
+    i3 = Interpolation(100, "i3", None, "")
+    i4 = Interpolation(101, "i4", None, "")
+    template = Template("hello", "there", i1, i2, "wow", "neat", i3, "fun", i4)
+    expected = (
+        "hellothere",
+        i1,
+        "",
+        i2,
+        "wowneat",
+        i3,
+        "fun",
+        i4,
+        "",
+    )
+    assert tuple(template.args) == expected
+
+
 # TODO uncomment these when _MISSING_IMPLICIT_CONCAT is False
 
 # Implicit concat syntax is not supported whatsoever in the current PEP 750
