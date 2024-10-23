@@ -47,6 +47,10 @@ _BUG_TEMPLATE_CONSTRUCTOR = True
 _BUG_NESTED_FORMAT_SPEC = True
 """True if the cpython prototype doesn't support interpolations within format specifications."""
 
+_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT = True
+"""True if invalid constructions of Interpolation lead to segfaults."""
+
+
 #
 # Debug utilities -- useful when developing some of these examples
 #

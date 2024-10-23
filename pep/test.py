@@ -13,6 +13,7 @@ from templatelib import Interpolation, Template
 from . import (
     _BUG_CONSTANT_TEMPLATE,
     _BUG_DEBUG_SPECIFIER,
+    _BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT,
     _BUG_NESTED_FORMAT_SPEC,
     _BUG_TEMPLATE_CONSTRUCTOR,
     _INCORRECT_SYNTAX_ERROR_MESSAGE,
@@ -191,9 +192,102 @@ def test_add_str_template_2():
     assert template.args[2] == "!"
 
 
+def test_interpolation_constructor_1():
+    i1 = Interpolation(42, "i1")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv is None
+    assert i1.format_spec == ""
+
+
+def test_interpolation_constructor_2():
+    i1 = Interpolation(42, "i1", "a")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv == "a"
+    assert i1.format_spec == ""
+
+
+def test_interpolation_constructor_3():
+    i1 = Interpolation(42, "i1", "a", ",.2f")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv == "a"
+    assert i1.format_spec == ",.2f"
+
+
+def test_interpolation_constructor_kwargs_1():
+    i1 = Interpolation(value=42, expr="i1")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv is None
+    assert i1.format_spec == ""
+
+
+def test_interpolation_constructor_kwargs_2():
+    """Test the Interpolation constructor with various valid arguments."""
+    i1 = Interpolation(value=42, expr="i1", conv="a")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv == "a"
+    assert i1.format_spec == ""
+
+
+def test_interpolation_constructor_kwargs_3():
+    """Test the Interpolation constructor with various valid arguments."""
+    i1 = Interpolation(value=42, expr="i1", format_spec=",.2f")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv == None
+    assert i1.format_spec == ",.2f"
+
+
+def test_interpolation_constructor_kwargs_4():
+    """Test the Interpolation constructor with various valid arguments."""
+    i1 = Interpolation(value=42, expr="i1", conv="a", format_spec=",.2f")
+    assert i1.value == 42
+    assert i1.expr == "i1"
+    assert i1.conv == "a"
+    assert i1.format_spec == ",.2f"
+
+
+@pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
+def test_interpolation_constructor_invalid_1():
+    with pytest.raises(TypeError):
+        _ = Interpolation(42)
+
+
+@pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
+def test_interpolation_constructor_invalid_2():
+    with pytest.raises(TypeError):
+        # expr must be a string
+        _ = Interpolation(42, None)
+
+
+@pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
+def test_interpolation_constructor_invalid_3():
+    with pytest.raises(TypeError):
+        # conv must be one of 'a', 'r', 's' or None
+        _ = Interpolation(42, "i1", "bogus")
+
+
+@pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
+def test_interpolation_constructor_invalid_kwargs_1():
+    with pytest.raises(TypeError):
+        # No such kwarg
+        _ = Interpolation(whatever=42)
+
+
+@pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
+def test_invalid_template_constructor():
+    # Only str and Interpolation objects are allowed in the constructor
+    with pytest.raises(TypeError):
+        _ = Template(42)
+
+
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
-def test_interleaving_empty():
+def test_template_constructor_interleaving_empty():
     """Test probably the most interesting corner case with interleaving."""
     # The PEP 750 specification requires that `Template.args` contains
     # one more string than interpolations. If there are no interpolations,
@@ -205,7 +299,7 @@ def test_interleaving_empty():
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
-def test_interleaving_single_string():
+def test_template_constructor_interleaving_single_string():
     template = Template("hello")
     expected = ("hello",)
     assert tuple(template.args) == ("hello",)
@@ -213,7 +307,7 @@ def test_interleaving_single_string():
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
-def test_interleaving_neighboring_strings():
+def test_template_constructor_interleaving_neighboring_strings():
     template = Template("hello", "world")
     expected = ("helloworld",)
     assert tuple(template.args) == expected
@@ -221,7 +315,7 @@ def test_interleaving_neighboring_strings():
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
-def test_interleaving_single_interpolation():
+def test_template_constructor_interleaving_single_interpolation():
     i1 = Interpolation(42, "i1", None, "")
     template = Template(i1)
     expected = ("", i1, "")
@@ -230,7 +324,7 @@ def test_interleaving_single_interpolation():
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
-def test_interleaving_neighboring_interpolations():
+def test_template_constructor_interleaving_neighboring_interpolations():
     i1 = Interpolation(42, "i1", None, "")
     i2 = Interpolation(99, "i2", None, "")
     template = Template(i1, i2)
@@ -240,7 +334,7 @@ def test_interleaving_neighboring_interpolations():
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
-def test_interleave_all_the_things():
+def test_template_constructor_interleaving_all_the_things():
     i1 = Interpolation(42, "i1", None, "")
     i2 = Interpolation(99, "i2", None, "")
     i3 = Interpolation(100, "i3", None, "")
