@@ -347,3 +347,120 @@ def test_syntax_error_1():
         # Use exec to avoid syntax error in the test itself
         exec('t"hello {}"')
         # Now, we got "f-string: valid expression required before '}'"
+
+
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_nested_interpolation():
+    """Test nested interpolations with correct interleaving"""
+    name = "World"
+    greeting = "Hello"
+    template = t"{greeting} {t'{name}'}"
+    assert isinstance(template, Template)
+    assert len(template.args) == 5
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == ""
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == "Hello"
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == " "
+    assert isinstance(template.args[3], Interpolation)
+    assert isinstance(template.args[3].value, Template)
+    assert isinstance(template.args[4], str)
+    assert template.args[4] == ""
+
+
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_multiple_adjacent_interpolations():
+    """Test multiple adjacent interpolations with correct interleaving"""
+    x, y = 10, 20
+    template = t"{x}{y}{x + y}"
+    assert isinstance(template, Template)
+    assert len(template.args) == 7
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == ""
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 10
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == ""
+    assert isinstance(template.args[3], Interpolation)
+    assert template.args[3].value == 20
+    assert isinstance(template.args[4], str)
+    assert template.args[4] == ""
+    assert isinstance(template.args[5], Interpolation)
+    assert template.args[5].value == 30
+    assert isinstance(template.args[6], str)
+    assert template.args[6] == ""
+
+
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_format_spec_with_interpolation():
+    """Test format specifications with nested interpolations"""
+    width = 10
+    value = 42
+    template = t"{value:.{width}f}"
+    assert isinstance(template, Template)
+    assert len(template.args) == 3
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == ""
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 42
+    assert template.args[1].format_spec == ".10f"
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == ""
+
+
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_complex_expressions_with_interleaving():
+    """Test complex expressions maintaining interleaving"""
+    x, y = 10, 20
+    template = t"Result: {x * y} and {sum([1, 2, 3])}"
+    assert isinstance(template, Template)
+    assert len(template.args) == 5
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "Result: "
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 200
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == " and "
+    assert isinstance(template.args[3], Interpolation)
+    assert template.args[3].value == 6
+    assert isinstance(template.args[4], str)
+    assert template.args[4] == ""
+
+
+def test_unicode_with_interleaving():
+    """Test Unicode strings with correct interleaving"""
+    name = "世界"
+    template = t"こんにちは{name}さん👋"
+    assert isinstance(template, Template)
+    assert len(template.args) == 3
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "こんにちは"
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == "世界"
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == "さん👋"
+
+
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_raw_template_with_interleaving():
+    """Test raw template strings maintain correct interleaving"""
+    path = r"C:\Users"
+    template = rt"{path}\n\t"
+    assert isinstance(template, Template)
+    assert len(template.args) == 3
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == ""
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == r"C:\Users"
+    assert isinstance(template.args[2], str)
+    assert template.args[2] == r"\n\t"
+
+
+def test_empty_template_with_whitespace():
+    """Test template with only whitespace maintains correct interleaving"""
+    template = t"   "
+    assert isinstance(template, Template)
+    assert len(template.args) == 1
+    assert isinstance(template.args[0], str)
+    assert template.args[0] == "   "
