@@ -1,6 +1,6 @@
 import inspect
 
-from templatelib import Template
+from templatelib import Interpolation, Template
 
 from .fstring import convert
 
@@ -16,17 +16,15 @@ async def aformat(template: Template) -> str:
     """
     parts = []
     for arg in template.args:
-        # TODO: when _BUG_INTERPOLATION_MATCH_ARGS is fixed, revert to using
-        # match/case just to stay in line with the PEP itself.
-        if isinstance(arg, str):
-            parts.append(arg)
-        else:
-            value = arg.value
-            if inspect.iscoroutinefunction(value):
-                value = await value()
-            elif callable(value):
-                value = value()
-            value = convert(value, arg.conv)
-            value = format(value, arg.format_spec)
-            parts.append(value)
+        match arg:
+            case str() as s:
+                parts.append(s)
+            case Interpolation(value, _, conv, format_spec):
+                if inspect.iscoroutinefunction(value):
+                    value = await value()
+                elif callable(value):
+                    value = value()
+                value = convert(value, conv)
+                value = format(value, format_spec)
+                parts.append(value)
     return "".join(parts)

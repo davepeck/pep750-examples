@@ -26,7 +26,7 @@ _MISSING_TEMPLATE_HASH = True
 _MISSING_INTERLEAVING = True
 """True if the cpython prototype doesn't interleave strings and interpolations."""
 
-_MISSING_IMPLICIT_CONCAT = False  # 🎉
+_MISSING_IMPLICIT_CONCAT = True
 """True if the cpython prototype doesn't support implicit concatenatenation."""
 
 _INCORRECT_INIT_ARGS = False  # 🎉

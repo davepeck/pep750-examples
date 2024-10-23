@@ -11,7 +11,7 @@ See also `test_fstring.py`
 
 from typing import Literal
 
-from templatelib import Template
+from templatelib import Interpolation, Template
 
 
 def convert(value: object, conv: Literal["a", "r", "s"] | None) -> object:
@@ -30,12 +30,11 @@ def f(template: Template) -> str:
     """Implement f-string behavior using the PEP 750 t-string behavior."""
     parts = []
     for arg in template.args:
-        # TODO: when _BUG_INTERPOLATION_MATCH_ARGS is fixed, revert to using
-        # match/case just to stay in line with the PEP itself.
-        if isinstance(arg, str):
-            parts.append(arg)
-        else:
-            value = convert(arg.value, arg.conv)
-            value = format(value, arg.format_spec)
-            parts.append(value)
+        match arg:
+            case str() as s:
+                parts.append(s)
+            case Interpolation(value, _, conv, format_spec):
+                value = convert(value, conv)
+                value = format(value, format_spec)
+                parts.append(value)
     return "".join(parts)

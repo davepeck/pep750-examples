@@ -10,6 +10,7 @@ from templatelib import Interpolation, Template
 
 from . import (
     _BUG_CONSTANT_TEMPLATE,
+    _BUG_DEBUG_SPECIFIER,
     _INCORRECT_SYNTAX_ERROR_MESSAGE,
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
@@ -238,40 +239,44 @@ def test_template_hash_1():
 
 @pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
 def test_template_hash_2():
-    assert hash(t"hello") != hash(t"world")
-
-
-@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
-def test_template_hash_3():
     planet = "earth"
     assert hash(t"hello {planet}") == hash(t"hello {planet}")
 
 
 @pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
-def test_template_hash_4():
-    planet = "earth"
-    satellite = "moon"
-    assert hash(t"hello {planet}") != hash(t"hello {satellite}")
-
-
-@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
-def test_template_hash_5():
+def test_template_hash_3():
     assert hash("hello" + t" {42}") == hash(t"hello {42}")
 
 
 @pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
 def test_template_hash_fails_if_values_are_not_hashable():
     with pytest.raises(TypeError):
-        hash(t"hello {[]}")
+        _ = hash(t"hello {[]}")
 
 
-# @pytest.mark.skipif(_BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented")
-# def test_template_debug_specifier():
-#     name = "World"
-#     template = t"Hello {name=}"
-#     assert template.args[0] == "Hello name="
-#     assert template.args[1].value == "World"
-#     assert template.args[1].conv == "r"
+# Testing that hashes *aren't* equal seems problematic to me? Commenting out for now. -Dave
+#
+# @pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+# def test_template_hash_4():
+#     assert hash(t"hello") != hash(t"world")
+#
+# @pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+# def test_template_hash_5():
+#     planet = "earth"
+#     satellite = "moon"
+#     assert hash(t"hello {planet}") != hash(t"hello {satellite}")
+
+
+@pytest.mark.skipif(
+    _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
+)
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_template_debug_specifier():
+    name = "World"
+    template = t"Hello {name=}"
+    assert template.args[0] == "Hello name="
+    assert template.args[1].value == "World"
+    assert template.args[1].conv == "r"
 
 
 def test_template_raw_template_strings_1():
