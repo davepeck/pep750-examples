@@ -41,6 +41,9 @@ _BUG_DEBUG_SPECIFIER = False  # 🎉
 _INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for syntax error message."""
 
+_BUG_TEMPLATE_CONSTRUCTOR = True
+"""True if `Template.__init__()` doesn't match the PEP 750 spec."""
+
 
 #
 # Debug utilities -- useful when developing some of these examples
