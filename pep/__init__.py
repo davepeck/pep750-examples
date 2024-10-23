@@ -17,7 +17,7 @@ _BUG_SINGLE_INTERPOLATION = False  # 🎉
 _MISSING_TEMPLATE_ADD_RADD = True
 """True if the cpython prototype is missing __add__ and __radd__ for Template."""
 
-_MISSING_TEMPLATE_EQ = True
+_MISSING_TEMPLATE_EQ = False  # 🎉
 """True if the cpython prototype is missing an updated __eq__ for Template."""
 
 _MISSING_INTERLEAVING = True
@@ -29,10 +29,10 @@ _MISSING_IMPLICIT_CONCAT = True
 _INCORRECT_INIT_ARGS = True
 """True if the cpython prototype doesn't have the correct __init__ arguments."""
 
-_BUG_INTERPOLATION_MATCH_ARGS = True
+_BUG_INTERPOLATION_MATCH_ARGS = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for Interpolation.__match_args__."""
 
-_BUG_DEBUG_SPECIFIER = True
+_BUG_DEBUG_SPECIFIER = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for debug specifier."""
 
 _INCORRECT_SYNTAX_ERROR_MESSAGE = True

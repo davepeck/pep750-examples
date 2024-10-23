@@ -1,4 +1,4 @@
-FROM koxudaxi/python:3.14.0a1-bullseye
+FROM koxudaxi/python:3.14.0a1-tstrings-94371bd-bullseye
 
 # # Allow PYO3 to build even though the configured interpreter version (3.14)
 # # is greater than PYO3's stated limit (3.12)
