@@ -276,7 +276,7 @@ def test_interpolation_constructor_invalid_kwargs_1():
 
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
-def test_invalid_template_constructor():
+def test_template_constructor_invalid():
     # Only str and Interpolation objects are allowed in the constructor
     with pytest.raises(TypeError):
         _ = Template(42)
@@ -638,6 +638,7 @@ def test_empty_template_with_whitespace():
     assert template.args[0] == "   "
 
 
+# CONSIDER: these seem to duplicate the other interleaving tests above. -Dave
 @pytest.mark.skipif(
     _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"
 )
