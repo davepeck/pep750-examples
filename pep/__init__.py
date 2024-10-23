@@ -14,7 +14,7 @@ _BUG_CONSTANT_TEMPLATE = False  # 🎉
 _BUG_SINGLE_INTERPOLATION = False  # 🎉
 """True if the cpython prototype evaluates `t"{42}"` as Interpolation(...), not Template."""
 
-_MISSING_TEMPLATE_ADD_RADD = True
+_MISSING_TEMPLATE_ADD_RADD = False  # 🎉
 """True if the cpython prototype is missing __add__ and __radd__ for Template."""
 
 _MISSING_TEMPLATE_EQ = False  # 🎉
