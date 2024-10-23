@@ -11,6 +11,7 @@ from templatelib import Interpolation, Template
 from . import (
     _BUG_CONSTANT_TEMPLATE,
     _BUG_DEBUG_SPECIFIER,
+    _BUG_NESTED_FORMAT_SPEC,
     _INCORRECT_SYNTAX_ERROR_MESSAGE,
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
@@ -90,6 +91,19 @@ def test_format_spec_and_conv():
     assert template.args[1].value == 42
     assert template.args[1].conv == "r"
     assert template.args[1].format_spec == "04d"
+
+
+@pytest.mark.skipif(
+    _BUG_NESTED_FORMAT_SPEC, reason="Nested format specs not implemented"
+)
+def test_format_spec_with_interpolation():
+    value = 42
+    precision = 2
+    template = t"Value: {value:.{precision}f}"
+    assert isinstance(template, Template)
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 42
+    assert template.args[1].format_spec == ".2f"
 
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")

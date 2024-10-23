@@ -44,6 +44,8 @@ _INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 _BUG_TEMPLATE_CONSTRUCTOR = True
 """True if `Template.__init__()` doesn't match the PEP 750 spec."""
 
+_BUG_NESTED_FORMAT_SPEC = True
+"""True if the cpython prototype doesn't support interpolations within format specifications."""
 
 #
 # Debug utilities -- useful when developing some of these examples
