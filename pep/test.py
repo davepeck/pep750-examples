@@ -174,6 +174,8 @@ def test_add_str_template_2():
     assert template.args[2] == "!"
 
 
+# TODO uncomment these when _MISSING_IMPLICIT_CONCAT is False
+
 # Implicit concat syntax is not supported whatsoever in the current PEP 750
 # def test_implicit_concat_str_template():
 #     template = "hello" t"world"
@@ -189,6 +191,40 @@ def test_add_str_template_2():
 #     assert len(template.args) == 1
 #     assert isinstance(template.args[0], str)
 #     assert template.args[0] == "hello" + "world"
+
+
+# def test_implicit_concat_fstr_template():
+#     name = "world"
+#     template = f"hello {name}, " t"your name is {name}!"
+#     assert isinstance(template, Template)
+#     assert len(template.args) == 5
+#     assert isinstance(template.args[0], str)
+#     assert template.args[0] == "hello "
+#     assert isinstance(template.args[1], Interpolation)
+#     assert template.args[1].value == name
+#     assert isinstance(template.args[2], str)
+#     assert template.args[2] == ", " + "your name is "
+#     assert isinstance(template.args[3], Interpolation)
+#     assert template.args[3].value == name
+#     assert isinstance(template.args[4], str)
+#     assert template.args[4] == "!"
+
+
+# def test_implicit_concat_template_fstr():
+#     name = "world"
+#     template = t"hello {name}, " f"your name is {name}!"
+#     assert isinstance(template, Template)
+#     assert len(template.args) == 5
+#     assert isinstance(template.args[0], str)
+#     assert template.args[0] == "hello "
+#     assert isinstance(template.args[1], Interpolation)
+#     assert template.args[1].value == name
+#     assert isinstance(template.args[2], str)
+#     assert template.args[2] == ", " + "your name is "
+#     assert isinstance(template.args[3], Interpolation)
+#     assert template.args[3].value == name
+#     assert isinstance(template.args[4], str)
+#     assert template.args[4] == "!"
 
 
 @pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
