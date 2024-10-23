@@ -35,7 +35,7 @@ _BUG_INTERPOLATION_MATCH_ARGS = False  # 🎉
 _BUG_DEBUG_SPECIFIER = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for debug specifier."""
 
-_INCORRECT_SYNTAX_ERROR_MESSAGE = False # 🎉
+_INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for syntax error message."""
 #
 # Debug utilities -- useful when developing some of these examples
