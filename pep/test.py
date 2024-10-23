@@ -5,6 +5,8 @@ fork of cpython, and partially in the __init__.py in this repository, works.
 See the __init__.py for a more detailed explanation.
 """
 
+import asyncio
+
 import pytest
 from templatelib import Interpolation, Template
 
@@ -514,3 +516,16 @@ def test_template_constructor_with_only_strings():
     template = Template("Hello", " ", "World")
     assert len(template.args) == 1
     assert template.args[0] == "Hello World"
+
+
+@pytest.mark.asyncio
+async def test_await_in_interpolation():
+    """Test that await is allowed in interpolations"""
+
+    async def get_value():
+        await asyncio.sleep(0.01)
+        return 42
+
+    template = t"Value: {await get_value()}"
+    assert isinstance(template.args[1], Interpolation)
+    assert template.args[1].value == 42
