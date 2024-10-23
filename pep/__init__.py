@@ -23,10 +23,10 @@ _MISSING_TEMPLATE_EQ = False  # 🎉
 _MISSING_INTERLEAVING = True
 """True if the cpython prototype doesn't interleave strings and interpolations."""
 
-_MISSING_IMPLICIT_CONCAT = True
+_MISSING_IMPLICIT_CONCAT = False  # 🎉
 """True if the cpython prototype doesn't support implicit concatenatenation."""
 
-_INCORRECT_INIT_ARGS = True
+_INCORRECT_INIT_ARGS = False  # 🎉
 """True if the cpython prototype doesn't have the correct __init__ arguments."""
 
 _BUG_INTERPOLATION_MATCH_ARGS = False  # 🎉
