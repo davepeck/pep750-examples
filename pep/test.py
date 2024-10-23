@@ -288,10 +288,9 @@ def test_invalid_template_constructor():
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_template_constructor_interleaving_empty():
-    """Test probably the most interesting corner case with interleaving."""
-    # The PEP 750 specification requires that `Template.args` contains
-    # one more string than interpolations. If there are no interpolations,
-    # we must therefore have one empty string in `Template.args`.
+    # PEP 750 requires that `Template.args` contains one more string than
+    # interpolations. If there are no interpolations, we must therefore have
+    # one empty string. `Template.args` can never be empty.
     template = Template()
     expected = ("",)
     assert tuple(template.args) == expected
