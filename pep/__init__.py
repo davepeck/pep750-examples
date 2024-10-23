@@ -23,7 +23,7 @@ _MISSING_TEMPLATE_EQ = False  # 🎉
 _MISSING_TEMPLATE_HASH = True
 """True if the cpython prototype is missing __hash__ for Template."""
 
-_MISSING_INTERLEAVING = True
+_MISSING_INTERLEAVING = False  # 🎉
 """True if the cpython prototype doesn't interleave strings and interpolations."""
 
 _MISSING_IMPLICIT_CONCAT = True
@@ -41,7 +41,7 @@ _BUG_DEBUG_SPECIFIER = False  # 🎉
 _INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for syntax error message."""
 
-_BUG_TEMPLATE_CONSTRUCTOR = True
+_BUG_TEMPLATE_CONSTRUCTOR = False  # 🎉
 """True if `Template.__init__()` doesn't match the PEP 750 spec."""
 
 _BUG_NESTED_FORMAT_SPEC = True

@@ -23,9 +23,6 @@ from . import (
     _MISSING_TEMPLATE_HASH,
 )
 
-# TODO: replace all instances of *** with "" once both
-# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION are False
-
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant templates bug")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
@@ -73,7 +70,7 @@ def test_mixed():
 
 
 def test_conv():
-    template = t"***{42!a}"
+    template = t"{42!a}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
@@ -81,7 +78,7 @@ def test_conv():
 
 
 def test_format_spec():
-    template = t"***{42:04d}"
+    template = t"{42:04d}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
@@ -89,7 +86,7 @@ def test_format_spec():
 
 
 def test_format_spec_and_conv():
-    template = t"***{42!r:04d}"
+    template = t"{42!r:04d}"
     assert isinstance(template, Template)
     assert isinstance(template.args[1], Interpolation)
     assert template.args[1].value == 42
@@ -566,6 +563,7 @@ def test_multiple_adjacent_interpolations():
     assert template.args[6] == ""
 
 
+@pytest.mark.skipif(_BUG_NESTED_FORMAT_SPEC, reason="Interleaving not implemented")
 @pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
 def test_format_spec_with_interpolation():
     """Test format specifications with nested interpolations"""
@@ -652,12 +650,12 @@ def test_template_constructor_interleaving():
     interp2 = Interpolation(name, "name")
 
     # Test different ordering patterns
-    template1 = Template("", interp1, " ", interp2, "!")
-    template2 = Template(interp1, " ", interp2, "!")  # No leading string
+    template1 = Template("", interp1, "", interp2, "!")
+    template2 = Template(interp1, "", interp2, "!")  # No leading string
     template3 = Template("", interp1, interp2, "!")  # No string between interpolations
 
     # All should result in the same interleaved pattern
-    expected_args = ("", interp1, " ", interp2, "!")
+    expected_args = ("", interp1, "", interp2, "!")
     assert template1.args == expected_args
     assert template2.args == expected_args
     assert template3.args == expected_args

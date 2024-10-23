@@ -12,9 +12,6 @@ from . import (
 )
 from .fstring import f
 
-# TODO: replace all instances of *** with "" once both
-# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION are False
-
 
 @pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_empty():
@@ -47,28 +44,28 @@ def test_mixed():
 
 
 def test_conv_a():
-    template: Template = t"***{'🎉'!a}"
-    assert f(template) == f"***{'🎉'!a}"
+    template: Template = t"{'🎉'!a}"
+    assert f(template) == f"{'🎉'!a}"
 
 
 def test_conv_r():
-    template: Template = t"***{42!r}"
-    assert f(template) == f"***{42!r}"
+    template: Template = t"{42!r}"
+    assert f(template) == f"{42!r}"
 
 
 def test_conv_s():
-    template: Template = t"***{42!s}"
-    assert f(template) == f"***{42!s}"
+    template: Template = t"{42!s}"
+    assert f(template) == f"{42!s}"
 
 
 def test_format_spec():
-    template: Template = t"***{42:04d}"
-    assert f(template) == f"***{42:04d}"
+    template: Template = t"{42:04d}"
+    assert f(template) == f"{42:04d}"
 
 
 def test_format_spec_and_conv():
-    template: Template = t"***{42!r:>8}"
-    assert f(template) == f"***{42!r:>8}"
+    template: Template = t"{42!r:>8}"
+    assert f(template) == f"{42!r:>8}"
 
 
 def test_pep_example():
@@ -79,7 +76,7 @@ def test_pep_example():
 
 
 def test_raises_the_same_exception():
-    invalid_template: Template = t"***{42!s:04d}"
+    invalid_template: Template = t"{42!s:04d}"
     try:
         f(invalid_template)
     except ValueError as e:

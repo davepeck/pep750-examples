@@ -75,6 +75,4 @@ class Binder:
                     value, expr, t_arg.conv, t_arg.format_spec
                 )
                 args.append(interpolation)
-        # TODO: change this to *args when cpython/tagstr is updated to match PEP 750
-        # TODO: captured as `_BUG_TEMPLATE_CONSTRUCTOR`
-        return Template(tuple(args))
+        return Template(*args)

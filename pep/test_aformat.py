@@ -13,17 +13,13 @@ from .fstring import f
 #
 
 
-# TODO: replace all instances of *** with "" once both
-# _MISSING_INTERLEAVING and _BUG_SINGLE_INTERPOLATION are False
-
-
 @pytest.mark.asyncio
 async def test_async_value():
     async def value():
         return 42
 
-    template: Template = t"***{value:.2f}"
-    assert await aformat(template) == "***42.00"
+    template: Template = t"{value:.2f}"
+    assert await aformat(template) == "42.00"
 
 
 @pytest.mark.asyncio
@@ -45,19 +41,19 @@ async def test_callable_value():
     def value():
         return 42
 
-    template: Template = t"***{value:.2f}"
-    assert await aformat(template) == "***42.00"
+    template: Template = t"{value:.2f}"
+    assert await aformat(template) == "42.00"
 
 
 @pytest.mark.asyncio
 async def test_lambda_value():
-    template: Template = t"***{(lambda: 42):.2f}"
-    assert await aformat(template) == "***42.00"
+    template: Template = t"{(lambda: 42):.2f}"
+    assert await aformat(template) == "42.00"
 
 
 @pytest.mark.asyncio
 async def test_lambda_unbound():
-    template: Template = t"***{(lambda: name)}"
+    template: Template = t"{(lambda: name)}"
 
     async def reuse(name: str) -> str:
         return await aformat(template)
@@ -72,5 +68,5 @@ async def test_await_in_interpolation():
         await asyncio.sleep(0.1)
         return 42
 
-    template: Template = t"***{await value():.2f}"
-    assert f(template) == "***42.00"
+    template: Template = t"{await value():.2f}"
+    assert f(template) == "42.00"
