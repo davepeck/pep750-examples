@@ -20,6 +20,9 @@ _MISSING_TEMPLATE_ADD_RADD = True
 _MISSING_TEMPLATE_EQ = False  # 🎉
 """True if the cpython prototype is missing an updated __eq__ for Template."""
 
+_MISSING_TEMPLATE_HASH = True
+"""True if the cpython prototype is missing __hash__ for Template."""
+
 _MISSING_INTERLEAVING = True
 """True if the cpython prototype doesn't interleave strings and interpolations."""
 
@@ -37,6 +40,8 @@ _BUG_DEBUG_SPECIFIER = False  # 🎉
 
 _INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for syntax error message."""
+
+
 #
 # Debug utilities -- useful when developing some of these examples
 #

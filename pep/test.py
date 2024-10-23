@@ -14,6 +14,7 @@ from . import (
     _MISSING_INTERLEAVING,
     _MISSING_TEMPLATE_ADD_RADD,
     _MISSING_TEMPLATE_EQ,
+    _MISSING_TEMPLATE_HASH,
 )
 
 # TODO: replace all instances of *** with "" once both
@@ -228,6 +229,40 @@ def test_template_eq_6():
 @pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template eq not implemented")
 def test_template_eq_7():
     assert t"{42}" + t"{99}" == t"{42}{99}"
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_1():
+    assert hash(t"hello") == hash(t"hello")
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_2():
+    assert hash(t"hello") != hash(t"world")
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_3():
+    planet = "earth"
+    assert hash(t"hello {planet}") == hash(t"hello {planet}")
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_4():
+    planet = "earth"
+    satellite = "moon"
+    assert hash(t"hello {planet}") != hash(t"hello {satellite}")
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_5():
+    assert hash("hello" + t" {42}") == hash(t"hello {42}")
+
+
+@pytest.mark.skipif(_MISSING_TEMPLATE_HASH, reason="Template hash not implemented")
+def test_template_hash_fails_if_values_are_not_hashable():
+    with pytest.raises(TypeError):
+        hash(t"hello {[]}")
 
 
 # @pytest.mark.skipif(_BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented")
