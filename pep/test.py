@@ -638,30 +638,6 @@ def test_empty_template_with_whitespace():
     assert template.args[0] == "   "
 
 
-# CONSIDER: these seem to duplicate the other interleaving tests above. -Dave
-@pytest.mark.skipif(
-    _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"
-)
-def test_template_constructor_interleaving():
-    """Test that Template constructor correctly interleaves strings and interpolations"""
-    # Create interpolations
-    name = "World"
-    greeting = "Hello"
-    interp1 = Interpolation(greeting, "greeting")
-    interp2 = Interpolation(name, "name")
-
-    # Test different ordering patterns
-    template1 = Template("", interp1, "", interp2, "!")
-    template2 = Template(interp1, "", interp2, "!")  # No leading string
-    template3 = Template("", interp1, interp2, "!")  # No string between interpolations
-
-    # All should result in the same interleaved pattern
-    expected_args = ("", interp1, "", interp2, "!")
-    assert template1.args == expected_args
-    assert template2.args == expected_args
-    assert template3.args == expected_args
-
-
 @pytest.mark.skipif(
     _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"
 )
