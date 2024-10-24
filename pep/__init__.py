@@ -50,6 +50,8 @@ _BUG_NESTED_FORMAT_SPEC = True
 _BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT = True
 """True if invalid constructions of Interpolation lead to segfaults."""
 
+_BUG_MANY_EXPRESSIONS = True
+"""True if the cpython prototype raises MemoryError for templates with >16 expressions."""
 
 #
 # Debug utilities -- useful when developing some of these examples

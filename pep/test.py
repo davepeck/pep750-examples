@@ -14,6 +14,7 @@ from . import (
     _BUG_CONSTANT_TEMPLATE,
     _BUG_DEBUG_SPECIFIER,
     _BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT,
+    _BUG_MANY_EXPRESSIONS,
     _BUG_NESTED_FORMAT_SPEC,
     _BUG_TEMPLATE_CONSTRUCTOR,
     _INCORRECT_SYNTAX_ERROR_MESSAGE,
@@ -700,3 +701,53 @@ def test_template_multiline_string_whitespace():
     assert len(template.args) == 3
     assert template.args[0].startswith("\n")
     assert "    Indented line" in template.args[2]
+
+
+def test_template_with_expressions_up_to_16():
+    """Test templates with up to 16 expressions, which is known to work."""
+
+    def build_template(n, extra=""):
+        return "t'" + ("{x} " * n) + extra + "'"
+
+    x = "X"
+    # Test up to 16 expressions (known working limit)
+    for i in range(1, 16):
+        template = eval(build_template(i))
+        assert isinstance(template, Template)
+        assert (
+            len(template.args) == 2 * i + 1
+        )  # expressions + strings between them + trailing string
+        assert all(
+            isinstance(template.args[j], str) for j in range(0, len(template.args), 2)
+        )
+        assert all(
+            isinstance(template.args[j], Interpolation)
+            for j in range(1, len(template.args), 2)
+        )
+
+
+@pytest.mark.skipif(
+    _BUG_MANY_EXPRESSIONS, reason="Templates with >16 expressions not supported"
+)
+def test_template_with_many_expressions():
+    """Test templates with more than 16 expressions.
+    Current implementation raises MemoryError for more than 16 expressions."""
+
+    def build_template(n, extra=""):
+        return "t'" + ("{x} " * n) + extra + "'"
+
+    x = "X"
+    # Test well beyond 16 expressions
+    for i in range(250, 260):
+        template = eval(build_template(i))
+        assert isinstance(template, Template)
+        assert (
+            len(template.args) == 2 * i + 1
+        )  # expressions + strings between them + trailing string
+        assert all(
+            isinstance(template.args[j], str) for j in range(0, len(template.args), 2)
+        )
+        assert all(
+            isinstance(template.args[j], Interpolation)
+            for j in range(1, len(template.args), 2)
+        )
