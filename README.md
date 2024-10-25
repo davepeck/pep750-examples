@@ -23,24 +23,15 @@ Python 3.14.0a1
 
 Congrats; you're good to go!
 
-
-
 ## A Word About the Code
 
-The current `cpython` implementation that this repository builds on top of is still a prototype. There are a few known divergences from the current PEP 750 draft:
+This repository builds on top of the @lysnikolaou's [cpython fork implementing t-strings](https://github.com/lysnikolaou/cpython/tree/tstrings).
 
-1. The prototype does not yet implement `str`/`Interpolation` interleaving
-2. The prototype does not yet support implicit concat
-3. `t"Hello"` currently gets folded into a `Constant` (a bug; some optimization somewhere we need to find)
-4. The `Template.__init__()` method takes a single `tuple[str | Interpolation]` argument, rather than a variadic list of arguments
-
-These will be updated over time.
-
-Some tests are currently skipped because they rely on features that are not quite ready in the prototype. These tests are marked with `@pytest.mark.skip(...)`.
+It uses @koxudaxi's [dockerfiles](https://github.com/pauleveritt/tagstr-site/actions/workflows/docker.yml) that package up that fork.
 
 ### Linting, formatting, etc.
 
-The included devcontainer loads [my fork of black that supports t-strings](https://github.com/davepeck/black/tree/pep750-support).
+The included devcontainer loads my [fork of black with t-string support](https://github.com/davepeck/black/tree/pep750-support).
 
 `isort` is used.
 
