@@ -53,7 +53,8 @@ _BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT = False  # 🎉
 _BUG_MANY_EXPRESSIONS = False  # 🎉
 """True if the cpython prototype raises MemoryError for templates with >16 expressions."""
 
-__BUG_INTERPOLATION_CONSTRUCTOR_CONV = True
+__BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV = True
+"""True if the cpython prototype ignores the conversion specifier in Interpolation.__init__."""
 #
 # Debug utilities -- useful when developing some of these examples
 #
