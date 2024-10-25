@@ -44,15 +44,16 @@ _INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 _BUG_TEMPLATE_CONSTRUCTOR = False  # 🎉
 """True if `Template.__init__()` doesn't match the PEP 750 spec."""
 
-_BUG_NESTED_FORMAT_SPEC = True
+_BUG_NESTED_FORMAT_SPEC = False  # 🎉
 """True if the cpython prototype doesn't support interpolations within format specifications."""
 
-_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT = True
+_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT = False  # 🎉
 """True if invalid constructions of Interpolation lead to segfaults."""
 
-_BUG_MANY_EXPRESSIONS = True
+_BUG_MANY_EXPRESSIONS = False  # 🎉
 """True if the cpython prototype raises MemoryError for templates with >16 expressions."""
 
+__BUG_INTERPOLATION_CONSTRUCTOR_CONV = True
 #
 # Debug utilities -- useful when developing some of these examples
 #

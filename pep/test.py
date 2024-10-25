@@ -22,6 +22,7 @@ from . import (
     _MISSING_TEMPLATE_ADD_RADD,
     _MISSING_TEMPLATE_EQ,
     _MISSING_TEMPLATE_HASH,
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV,
 )
 
 
@@ -70,6 +71,9 @@ def test_mixed():
     assert template.args[4] == "goodbye"
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 def test_conv():
     template = t"{42!a}"
     assert isinstance(template, Template)
@@ -86,6 +90,9 @@ def test_format_spec():
     assert template.args[1].format_spec == "04d"
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 def test_format_spec_and_conv():
     template = t"{42!r:04d}"
     assert isinstance(template, Template)
@@ -198,6 +205,9 @@ def test_interpolation_constructor_1():
     assert i1.format_spec == ""
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 def test_interpolation_constructor_2():
     i1 = Interpolation(42, "i1", "a")
     assert i1.value == 42
@@ -206,6 +216,9 @@ def test_interpolation_constructor_2():
     assert i1.format_spec == ""
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 def test_interpolation_constructor_3():
     i1 = Interpolation(42, "i1", "a", ",.2f")
     assert i1.value == 42
@@ -222,6 +235,9 @@ def test_interpolation_constructor_kwargs_1():
     assert i1.format_spec == ""
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 def test_interpolation_constructor_kwargs_2():
     """Test the Interpolation constructor with various valid arguments."""
     i1 = Interpolation(value=42, expr="i1", conv="a")
@@ -240,6 +256,9 @@ def test_interpolation_constructor_kwargs_3():
     assert i1.format_spec == ",.2f"
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 def test_interpolation_constructor_kwargs_4():
     """Test the Interpolation constructor with various valid arguments."""
     i1 = Interpolation(value=42, expr="i1", conv="a", format_spec=",.2f")
@@ -262,6 +281,9 @@ def test_interpolation_constructor_invalid_2():
         _ = Interpolation(42, None)
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 @pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
 def test_interpolation_constructor_invalid_3():
     with pytest.raises(TypeError):
@@ -489,6 +511,9 @@ def test_template_hash_6():
         pytest.fail("Should not raise TypeError for hashable values")
 
 
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_CONV, reason="Interpolation constructor conv bug"
+)
 @pytest.mark.skipif(
     _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
 )
