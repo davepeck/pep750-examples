@@ -727,7 +727,19 @@ def test_template_with_expressions_up_to_16():
 
 
 @pytest.mark.skipif(
-    _BUG_MANY_EXPRESSIONS, reason="Templates with >16 expressions not supported"
+    _BUG_MANY_EXPRESSIONS, reason="Templates with many expressions not supported"
+)
+def test_template_with_many_expressions_direct():
+    working = t"{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}{23}{24}{25}{26}{27}{28}{29}{30}"
+    assert isinstance(working, Template)
+    # This next line currently raises a TypeError exception:
+    # TypeError: sequence item 0: expected str instance, templatelib.Interpolation found
+    busted = t"{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}{23}{24}{25}{26}{27}{28}{29}{30}{31}"
+    assert isinstance(busted, Template)
+
+
+@pytest.mark.skipif(
+    _BUG_MANY_EXPRESSIONS, reason="Templates with many expressions not supported"
 )
 def test_template_with_many_expressions():
     """Test templates with more than 16 expressions.
