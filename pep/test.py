@@ -72,7 +72,8 @@ def test_mixed():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 def test_conv():
     template = t"{42!a}"
@@ -91,7 +92,8 @@ def test_format_spec():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 def test_format_spec_and_conv():
     template = t"{42!r:04d}"
@@ -206,7 +208,8 @@ def test_interpolation_constructor_1():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 def test_interpolation_constructor_2():
     i1 = Interpolation(42, "i1", "a")
@@ -217,7 +220,8 @@ def test_interpolation_constructor_2():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 def test_interpolation_constructor_3():
     i1 = Interpolation(42, "i1", "a", ",.2f")
@@ -236,7 +240,8 @@ def test_interpolation_constructor_kwargs_1():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 def test_interpolation_constructor_kwargs_2():
     """Test the Interpolation constructor with various valid arguments."""
@@ -257,7 +262,8 @@ def test_interpolation_constructor_kwargs_3():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 def test_interpolation_constructor_kwargs_4():
     """Test the Interpolation constructor with various valid arguments."""
@@ -282,7 +288,8 @@ def test_interpolation_constructor_invalid_2():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 @pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
 def test_interpolation_constructor_invalid_3():
@@ -512,7 +519,8 @@ def test_template_hash_6():
 
 
 @pytest.mark.skipif(
-    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV, reason="Interpolation constructor conv bug"
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
 )
 @pytest.mark.skipif(
     _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
