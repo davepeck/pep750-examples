@@ -1,7 +1,7 @@
 """
 Implement f-string like behavior on top of t-strings.
 
-Tempalate strings are a generalization of f-strings. t-strings evaluate
+Template strings are a generalization of f-strings. t-strings evaluate
 to a new type (`Template`); it is possible to take a `Template` and build
 a string that exactly matches the result had an `f`-prefix been used in the
 first place.
@@ -11,8 +11,7 @@ See also `test_fstring.py`
 
 from typing import Literal
 
-# When PEP 750 lands, this will be `from types import ...`
-from . import Interpolation, Template
+from templatelib import Interpolation, Template
 
 
 def convert(value: object, conv: Literal["a", "r", "s"] | None) -> object:

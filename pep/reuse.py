@@ -7,7 +7,8 @@ behavior, where we can build up a template and then apply it to multiple
 values?
 """
 
-from . import Interpolation, Template
+from templatelib import Interpolation, Template
+
 from .fstring import convert
 
 

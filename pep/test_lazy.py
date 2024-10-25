@@ -1,4 +1,5 @@
-from . import Template, t
+from templatelib import Template
+
 from .lazy import format_some
 
 

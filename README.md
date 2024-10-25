@@ -4,7 +4,7 @@ This repository contains full implementations of the code examples described in 
 
 ## Running This Code
 
-This repo has a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14](https://github.com/lysnikolaou/cpython/tree/tag-strings-rebased) that provides a prototype implementation of PEP 750.
+This repo has a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14](https://github.com/lysnikolaou/cpython/tree/tstrings) that provides a prototype implementation of PEP 750.
 
 It's easy to run this code yourself:
 
@@ -16,7 +16,7 @@ After the container is initialized, make sure that everything works by opening u
 
 ```
 /workspaces/pep750-examples# python --version
-Python 3.14.0a0
+Python 3.14.0a1
 /workspaces/pep750-examples# pytest
 ... (hopefully, all tests pass!) ...
 ```
@@ -27,15 +27,16 @@ Congrats; you're good to go!
 
 ## A Word About the Code
 
-The current `cpython` implementation that this repository builds on top of tracks an _older_ version of PEP 750 with somewhat different syntax and semantics than the fully up-to-date PEP.
+The current `cpython` implementation that this repository builds on top of is still a prototype. There are a few known divergences from the current PEP 750 draft:
 
-Luckily, we can "smooth over" the important differences in a handful of lines of Python code. That's what's in the [`pep/__init__.py`](./pep/__init__.py) file.
+1. The prototype does not yet implement `str`/`Interpolation` interleaving
+2. The prototype does not yet support implicit concat
+3. `t"Hello"` currently gets folded into a `Constant` (a bug; some optimization somewhere we need to find)
+4. The `Template.__init__()` method takes a single `tuple[str | Interpolation]` argument, rather than a variadic list of arguments
 
-When PEP 750 lands in cpython, you'll be able to simply write a template string with a `t` prefix: `t"This is a template string"`. However, in this example code, because of the divergence between our `cpython` implementation and PEP 750, you first need to `from pep import t` in order to use the `t"Hello, World"` syntax.
+These will be updated over time.
 
-Likewise, when PEP 750 lands, you'll be able to `from types import Template, Interpolation`. Right now, those types are _also_ defined in the `pep` module.
-
-If you're just reading the example code and tests, you probably won't have to think about this. We'll update this repository when an updated version of `cpython` is available.
+Some tests are currently skipped because they rely on features that are not quite ready in the prototype. These tests are marked with `@pytest.mark.skip(...)`.
 
 ### Linting, formatting, etc.
 

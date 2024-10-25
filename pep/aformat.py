@@ -1,6 +1,7 @@
-import asyncio
+import inspect
 
-from . import Interpolation, Template
+from templatelib import Interpolation, Template
+
 from .fstring import convert
 
 
@@ -19,7 +20,7 @@ async def aformat(template: Template) -> str:
             case str() as s:
                 parts.append(s)
             case Interpolation(value, _, conv, format_spec):
-                if asyncio.iscoroutinefunction(value):
+                if inspect.iscoroutinefunction(value):
                     value = await value()
                 elif callable(value):
                     value = value()
