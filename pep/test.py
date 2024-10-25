@@ -293,7 +293,7 @@ def test_interpolation_constructor_invalid_2():
 )
 @pytest.mark.skipif(_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT, reason="Segfault bug")
 def test_interpolation_constructor_invalid_3():
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         # conv must be one of 'a', 'r', 's' or None
         _ = Interpolation(42, "i1", "bogus")
 
