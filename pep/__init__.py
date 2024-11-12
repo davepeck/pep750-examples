@@ -38,6 +38,9 @@ _BUG_INTERPOLATION_MATCH_ARGS = False  # 🎉
 _BUG_DEBUG_SPECIFIER = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for debug specifier."""
 
+_BUG_DEBUG_SPECIFIER_WITH_FMT = True
+"""True if the cpython prototype doesn't match the PEP 750 spec for debug specifier with format."""
+
 _INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
 """True if the cpython prototype doesn't match the PEP 750 spec for syntax error message."""
 

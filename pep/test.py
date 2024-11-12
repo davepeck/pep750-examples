@@ -14,6 +14,7 @@ from . import (
     __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
     _BUG_CONSTANT_TEMPLATE,
     _BUG_DEBUG_SPECIFIER,
+    _BUG_DEBUG_SPECIFIER_WITH_FMT,
     _BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT,
     _BUG_MANY_EXPRESSIONS,
     _BUG_NESTED_FORMAT_SPEC,
@@ -532,6 +533,26 @@ def test_template_debug_specifier():
     assert template.args[0] == "Hello name="
     assert template.args[1].value == "World"
     assert template.args[1].conv == "r"
+
+
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
+)
+@pytest.mark.skipif(
+    _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
+)
+@pytest.mark.skipif(
+    _BUG_DEBUG_SPECIFIER_WITH_FMT,
+    reason="Template debug specifier with fmt string not implemented",
+)
+def test_template_debug_specifier_with_format_spec():
+    value = 42
+    template = t"Value: {value=:spec}"
+    assert template.args[0] == "Value: value="
+    assert template.args[1].value == 42
+    assert template.args[1].conv == "s"
+    assert template.args[1].format_spec == "spec"
 
 
 def test_template_raw_template_strings_1():
