@@ -542,6 +542,22 @@ def test_template_debug_specifier():
 @pytest.mark.skipif(
     _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
 )
+@pytest.mark.skipif(_MISSING_INTERLEAVING, reason="Interleaving not implemented")
+def test_template_debug_specifier_expr_preserves_whitespace():
+    name = "World"
+    template = t"Hello {   name  = }"
+    assert template.args[0] == "Hello    name  = "
+    assert template.args[1].value == "World"
+    assert template.args[1].conv == "r"
+
+
+@pytest.mark.skipif(
+    __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
+    reason="Interpolation constructor conv bug",
+)
+@pytest.mark.skipif(
+    _BUG_DEBUG_SPECIFIER, reason="Template debug specifier not implemented"
+)
 @pytest.mark.skipif(
     _BUG_DEBUG_SPECIFIER_WITH_FMT,
     reason="Template debug specifier with fmt string not implemented",
