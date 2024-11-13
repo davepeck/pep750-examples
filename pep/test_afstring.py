@@ -3,11 +3,11 @@ import asyncio
 import pytest
 from templatelib import Template
 
-from .aformat import aformat
+from .afstring import async_f
 from .fstring import f
 
 #
-# The following tests are specific to the aformat() function. They test the
+# The following tests are specific to the async_f() function. They test the
 # async behavior of the function, and the ability to use callable and awaitable
 # values in the template.
 #
@@ -19,7 +19,7 @@ async def test_async_value():
         return 42
 
     template: Template = t"{value:.2f}"
-    assert await aformat(template) == "42.00"
+    assert await async_f(template) == "42.00"
 
 
 @pytest.mark.asyncio
@@ -33,7 +33,7 @@ async def test_multiple_async_values():
         return 99
 
     template: Template = t"{value1:.2f} {value2:.2f}"
-    assert await aformat(template) == "42.00 99.00"
+    assert await async_f(template) == "42.00 99.00"
 
 
 @pytest.mark.asyncio
@@ -42,13 +42,13 @@ async def test_callable_value():
         return 42
 
     template: Template = t"{value:.2f}"
-    assert await aformat(template) == "42.00"
+    assert await async_f(template) == "42.00"
 
 
 @pytest.mark.asyncio
 async def test_lambda_value():
     template: Template = t"{(lambda: 42):.2f}"
-    assert await aformat(template) == "42.00"
+    assert await async_f(template) == "42.00"
 
 
 @pytest.mark.asyncio
@@ -56,7 +56,7 @@ async def test_lambda_unbound():
     template: Template = t"{(lambda: name)}"
 
     async def reuse(name: str) -> str:
-        return await aformat(template)
+        return await async_f(template)
 
     with pytest.raises(NameError):
         await reuse("nope")

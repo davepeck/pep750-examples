@@ -1,3 +1,9 @@
+"""
+Implement 'asynchronous' f-string like behavior on top of t-strings.
+
+See also `test_afstring.py`
+"""
+
 import inspect
 
 from templatelib import Interpolation, Template
@@ -5,7 +11,7 @@ from templatelib import Interpolation, Template
 from .fstring import convert
 
 
-async def aformat(template: Template) -> str:
+async def async_f(template: Template) -> str:
     """
     Implement f-string formatting for async functions.
 

@@ -107,6 +107,26 @@ def test_binder():
 See [`reuse.py`](./pep/reuse.py) for the full implementation and [`test_reuse.py`](./pep/test_reuse.py) for the tests. There is also a `Formatter` class that provides a `format()` method.
 
 
+### Working with old-style format strings
+
+Plenty of Python code uses format strings that are then used with `str.format()`.
+
+We show how an arbitrary format string of that form can be converted to a `Template` instance:
+
+```python
+from pep.format import make_template
+from pep.fstring import f
+
+name = "World"
+fmt_string = "Hello, {name}! {}"
+as_formatted = fmt_string.format(42, name=name)
+as_template = make_template(fmt_string, 42, name=name)
+assert f(as_template) == as_formatted
+```
+
+See [`format.py`](./pep/format.py) for the full implementation and [`test_format.py`](./pep/test_format.py) for the tests.
+
+
 ### HTML Templating
 
 There are several short "HTML templating" examples in [PEP 750](https://pep-previews--4062.org.readthedocs.build/pep-0750/).
