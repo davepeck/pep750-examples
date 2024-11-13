@@ -140,18 +140,22 @@ def make_template(fmt: str, /, *args: object, **kwargs: object) -> Template:
     by directly parsing the string.
 
     We support *nearly* all the grammatical features of the `str.format()` method,
-    including positional arguments.
-
-    The one feature we don't *yet* support is the ability to use interpolations
-    for format specifiers; only support literal format specifiers are supported.
-    This currently throws a NotImplementedError:
-
-        make_template("{:{}}", 42, ".2f")
+    including positional arguments with automatic or manual numbering, and
+    keyword arguments.
 
     We also support the limitations of `str.format()`, including lack of support
     for arbitrary expressions in interpolations (these are treated as keys) and
     lack of support for intermingling automatic field numbering with manual field
     numbering.
+
+    The one feature we don't *yet* support is the ability to use interpolations
+    for format specifiers; only literal format specifiers are supported.
+    As a result, this currently throws a NotImplementedError:
+
+        make_template("{:{}}", 42, ".2f")
+
+    There's no fundamental reason we couldn't support this, but it's a bit more
+    complicated, so we haven't done it yet.
     """
     template_args: list[str | Interpolation] = []
     for part in _parse_fmt_string(fmt):
