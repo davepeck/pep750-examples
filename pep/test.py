@@ -321,7 +321,7 @@ def test_template_constructor_interleaving_empty():
     # one empty string. `Template.args` can never be empty.
     template = Template()
     expected = ("",)
-    assert tuple(template.args) == expected
+    assert template.args == expected
 
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
@@ -329,7 +329,7 @@ def test_template_constructor_interleaving_empty():
 def test_template_constructor_interleaving_single_string():
     template = Template("hello")
     expected = ("hello",)
-    assert tuple(template.args) == ("hello",)
+    assert template.args == ("hello",)
 
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
@@ -337,7 +337,7 @@ def test_template_constructor_interleaving_single_string():
 def test_template_constructor_interleaving_neighboring_strings():
     template = Template("hello", "world")
     expected = ("helloworld",)
-    assert tuple(template.args) == expected
+    assert template.args == expected
 
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
@@ -346,7 +346,7 @@ def test_template_constructor_interleaving_single_interpolation():
     i1 = Interpolation(42, "i1", None, "")
     template = Template(i1)
     expected = ("", i1, "")
-    assert tuple(template.args) == expected
+    assert template.args == expected
 
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
@@ -356,7 +356,7 @@ def test_template_constructor_interleaving_neighboring_interpolations():
     i2 = Interpolation(99, "i2", None, "")
     template = Template(i1, i2)
     expected = ("", i1, "", i2, "")
-    assert tuple(template.args) == expected
+    assert template.args == expected
 
 
 @pytest.mark.skipif(_BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor bug")
@@ -378,7 +378,7 @@ def test_template_constructor_interleaving_all_the_things():
         i4,
         "",
     )
-    assert tuple(template.args) == expected
+    assert template.args == expected
 
 
 # TODO uncomment these when _MISSING_IMPLICIT_CONCAT is False
