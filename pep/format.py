@@ -4,30 +4,9 @@ Example code to take an old-school format string intended to be used with the
 """
 
 import re
-from typing import Literal, cast
+from typing import Literal
 
 from templatelib import Interpolation, Template
-
-
-def make_template_with_eval(s: str, **kwargs: object) -> Template:
-    """
-    Trivial example of converting something *like* an old-style format string
-    into a `Template` using `eval()`.
-
-    This doesn't *quite* support all the features of the `str.format()` method.
-    For instance, it does not support positional arguments.
-
-    It also supports some features that are *not* supported by `str.format()`,
-    such as arbitrary expressions in the interpolations.
-
-    It's still probably useful in some cases.
-    """
-    # Replace " with \" but only if it's not preceded by a \
-    # already.
-    safe = re.sub(r'(?<!\\)"', r'\\"', s)
-    to_eval = f't"{safe}"'
-    return eval(to_eval, kwargs)
-
 
 type ParsedIndex = int | None
 type ParsedKey = str | None
@@ -39,6 +18,12 @@ type ParsedInterpolation = tuple[
 
 
 def _parse_fmt_string(fmt: str) -> tuple[str | ParsedInterpolation, ...]:
+    """
+    Parse a format string intended for use with `str.format()` and return a
+    list of static string parts and interpolation parts. These parts are
+    similar to, but not identical to, the parts of a `Template` instance;
+    the from_format() function below takes care of the final conversion.
+    """
     # Regular expression to match format specifiers, including conversion and format spec
     # pattern = re.compile(r"(.*?)\{([^\{\}]*?)(?:!([sra]))?(?::([^\{\}]*?))?\}")
     pattern = re.compile(
@@ -134,10 +119,10 @@ def _parse_fmt_string(fmt: str) -> tuple[str | ParsedInterpolation, ...]:
     return tuple(result)
 
 
-def make_template(fmt: str, /, *args: object, **kwargs: object) -> Template:
+def from_format(fmt: str, /, *args: object, **kwargs: object) -> Template:
     """
-    Sophisticated example of converting an old-style format string to a `Template`
-    by directly parsing the string.
+    Parses a format string intended for use with the `str.format()` method and
+    returns an equivalent `Template` instance.
 
     We support *nearly* all the grammatical features of the `str.format()` method,
     including positional arguments with automatic or manual numbering, and
@@ -149,13 +134,13 @@ def make_template(fmt: str, /, *args: object, **kwargs: object) -> Template:
     numbering.
 
     The one feature we don't *yet* support is the ability to use interpolations
-    for format specifiers; only literal format specifiers are supported.
-    As a result, this currently throws a NotImplementedError:
+    inside format specifiers; currently, only literal format specifiers are
+    supported. As a result, this throws a NotImplementedError:
 
         make_template("{:{}}", 42, ".2f")
 
     There's no fundamental reason we couldn't support this, but it's a bit more
-    complicated, so we haven't done it yet.
+    work, so we haven't done it yet.
     """
     template_args: list[str | Interpolation] = []
     for part in _parse_fmt_string(fmt):

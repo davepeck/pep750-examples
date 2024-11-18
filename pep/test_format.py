@@ -1,43 +1,7 @@
 import pytest
 from templatelib import Interpolation, Template
 
-from .format import _parse_fmt_string, make_template, make_template_with_eval
-
-#
-# Trivial tests for make_template_with_eval(...)
-#
-
-
-def test_make_template_eval_empty():
-    assert make_template_with_eval("") == t""
-
-
-def test_make_template_with_eval_simple_interpolation():
-    name = "world"
-    assert make_template_with_eval("Hello, {name}!", name=name) == t"Hello, {name}!"
-
-
-def test_make_template_with_eval_with_double_quotes():
-    name = "world"
-    assert make_template_with_eval('Hello, "{name}"!', name=name) == t'Hello, "{name}"!'
-
-
-def test_make_template_with_eval_with_escape():
-    name = "world"
-    assert make_template_with_eval('Hello, "{name}"!', name=name) == t'Hello, "{name}"!'
-
-
-def test_make_template_with_eval_raw_string():
-    name = "world"
-    assert (
-        make_template_with_eval(r"Hello, \"{name}\"!", name=name) == t'Hello, "{name}"!'
-    )
-
-
-def test_make_template_with_eval_curly_escape():
-    name = "world"
-    assert make_template_with_eval("Hello, {{name}}!", name=name) == t"Hello, {{name}}!"
-
+from .format import _parse_fmt_string, from_format
 
 #
 # Test the _parse_fmt_string(...) helper function
@@ -168,7 +132,7 @@ def test_parse_fmt_string_nested_interpolations():
 
 
 #
-# Test the fancy make_template(...) function
+# Test the fancy from_format(...) function
 #
 
 
@@ -213,128 +177,128 @@ def _almost_eq(t1: Template, t2: Template) -> bool:
     return True
 
 
-def test_make_template_empty():
-    made: Template = make_template("")
+def test_from_format_empty():
+    made: Template = from_format("")
     expected: Template = t""
     assert _almost_eq(made, expected)
 
 
-def test_make_template_simple():
-    made: Template = make_template("Hello!")
+def test_from_format_simple():
+    made: Template = from_format("Hello!")
     expected: Template = t"Hello!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_simple_key_interpolation():
+def test_from_format_simple_key_interpolation():
     name = "world"
-    made: Template = make_template("Hello, {name}!", **locals())
+    made: Template = from_format("Hello, {name}!", **locals())
     expected: Template = t"Hello, {name}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_complex_key_interpolation():
+def test_from_format_complex_key_interpolation():
     name = "world"
-    made: Template = make_template("Hello, {name!s:.2f}!", **locals())
+    made: Template = from_format("Hello, {name!s:.2f}!", **locals())
     expected: Template = t"Hello, {name!s:.2f}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_simple_auto_index_interpolation():
+def test_from_format_simple_auto_index_interpolation():
     name = "world"
-    made: Template = make_template("Hello, {}!", name)
+    made: Template = from_format("Hello, {}!", name)
     expected: Template = t"Hello, {name}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_complex_auto_index_interpolation():
+def test_from_format_complex_auto_index_interpolation():
     name = "world"
-    made: Template = make_template("Hello, {!s:.2f}!", name)
+    made: Template = from_format("Hello, {!s:.2f}!", name)
     expected: Template = t"Hello, {name!s:.2f}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_simple_manual_index_interpolation():
+def test_from_format_simple_manual_index_interpolation():
     name = "world"
-    made: Template = make_template("Hello, {1}!", 99, name)
+    made: Template = from_format("Hello, {1}!", 99, name)
     expected: Template = t"Hello, {name}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_complex_manual_index_interpolation():
+def test_from_format_complex_manual_index_interpolation():
     name = "world"
-    made: Template = make_template("Hello, {1!s:.2f}!", 99, name)
+    made: Template = from_format("Hello, {1!s:.2f}!", 99, name)
     expected: Template = t"Hello, {name!s:.2f}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_multiple_auto_index_interpolations():
-    made: Template = make_template("{}{}", 99, "world")
+def test_from_format_multiple_auto_index_interpolations():
+    made: Template = from_format("{}{}", 99, "world")
     expected: Template = t"{99}{'world'}"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_multiple_manual_index_interpolations():
-    made: Template = make_template("{1}{0}", 99, "world")
+def test_from_format_multiple_manual_index_interpolations():
+    made: Template = from_format("{1}{0}", 99, "world")
     expected: Template = t"{'world'}{99}"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_interleaved_static_and_auto_index():
-    made: Template = make_template("Hello, {}! What {}?", 99, "world")
+def test_from_format_interleaved_static_and_auto_index():
+    made: Template = from_format("Hello, {}! What {}?", 99, "world")
     expected: Template = t"Hello, {99}! What {'world'}?"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_interleaved_static_and_manual_index():
-    made: Template = make_template("Hello, {2}! What {1}?", 99, "world", 42)
+def test_from_format_interleaved_static_and_manual_index():
+    made: Template = from_format("Hello, {2}! What {1}?", 99, "world", 42)
     expected: Template = t"Hello, {42}! What {'world'}?"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_invalid_auto_to_manual_index():
+def test_from_format_invalid_auto_to_manual_index():
     with pytest.raises(ValueError):
-        _ = make_template("{}{1}", 99, "world")
+        _ = from_format("{}{1}", 99, "world")
 
 
-def test_make_template_invalid_manual_to_auto_index():
+def test_from_format_invalid_manual_to_auto_index():
     with pytest.raises(ValueError):
-        _ = make_template("{1}{}", 99, "world")
+        _ = from_format("{1}{}", 99, "world")
 
 
-def test_make_template_invalid_conversion_spec():
+def test_from_format_invalid_conversion_spec():
     with pytest.raises(ValueError):
-        _ = make_template("{name!z}", name="world")
+        _ = from_format("{name!z}", name="world")
 
 
-def test_make_template_invalid_conversion_spec_too_many_chars():
+def test_from_format_invalid_conversion_spec_too_many_chars():
     with pytest.raises(ValueError):
-        _ = make_template("{name!ss}", name="world")
+        _ = from_format("{name!ss}", name="world")
 
 
-def test_make_template_mixed_static_auto_and_key_interpolations():
+def test_from_format_mixed_static_auto_and_key_interpolations():
     name = "world"
-    made: Template = make_template("Hello, {}{name}!", 99, name=name)
+    made: Template = from_format("Hello, {}{name}!", 99, name=name)
     expected: Template = t"Hello, {99}{name}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_mixed_static_manual_and_key_interpolations():
+def test_from_format_mixed_static_manual_and_key_interpolations():
     name = "world"
-    made: Template = make_template("Hello, {1}{name}!", 42, 99, name=name)
+    made: Template = from_format("Hello, {1}{name}!", 42, 99, name=name)
     expected: Template = t"Hello, {99}{name}!"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_complex():
+def test_from_format_complex():
     name = "world"
     wow = "burrito"
-    made: Template = make_template(
+    made: Template = from_format(
         "{}{wow}Hello, {}{name!s:.2f}!{:fun}", 99, 42, 76, name=name, wow=wow
     )
     expected: Template = t"{99}{wow}Hello, {42}{name!s:.2f}!{76:fun}"
     assert _almost_eq(made, expected)
 
 
-def test_make_template_nested_interpolations():
+def test_from_format_nested_interpolations():
     with pytest.raises(NotImplementedError):
-        _ = make_template("{name:{fmt}}", name="world", fmt=".2f")
+        _ = from_format("{name:{fmt}}", name="world", fmt=".2f")
