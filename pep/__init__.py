@@ -1,185 +1,63 @@
-"""
-Examples for PEP 750.
+"""Examples for PEP 750. See README.md for details."""
 
-This repository has a .devcontainer and a Dockerfile that pulls down a fork
-of Python 3.14 that supports an *older* version of the PEP 750 specification.
-
-We smooth over the differences here by defining the *current* PEP 750's
-`Template` and `Interpolation` types. We also implement the `t` prefix here.
-
-To *use* the `t` prefix as described in the current version of PEP 750, simply:
-
-from . import t
-
-name = "World"
-template = t"Hello {name}"
-
-When our fork of cpython is updated, we'll also remove all this stuff -- again,
-it exists only temporarily, to smooth over differences between the old PEP 750
-spec and the new.
-"""
-
-from dataclasses import dataclass
 from html.parser import HTMLParser
-from typing import Interpolation as OldVersionOfInterpolation
-from typing import Literal, Sequence
 
+#
+# Known bugs/divergences between cpython/tstrings and the current PEP 750 spec
+#
 
-class Interpolation:
-    value: object
-    expr: str
-    conv: Literal["a", "r", "s"] | None
-    format_spec: str
+# When these go to False, we can remove 'em.
 
-    __match_args__ = ("value", "expr", "conv", "format_spec")
+_BUG_CONSTANT_TEMPLATE = False  # 🎉
+"""True if constant templates are turned into Constant in the cpython prototype."""
 
-    def __init__(
-        self,
-        value: object,
-        expr: str,
-        conv: Literal["a", "r", "s"] | None = None,
-        format_spec: str = "",
-    ):
-        self.value = value
-        self.expr = expr
-        self.conv = conv
-        self.format_spec = format_spec
+_BUG_SINGLE_INTERPOLATION = False  # 🎉
+"""True if the cpython prototype evaluates `t"{42}"` as Interpolation(...), not Template."""
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Interpolation):
-            return NotImplemented
-        return (
-            self.value == other.value
-            and self.expr == other.expr
-            and self.conv == other.conv
-            and self.format_spec == other.format_spec
-        )
+_MISSING_TEMPLATE_ADD_RADD = False  # 🎉
+"""True if the cpython prototype is missing __add__ and __radd__ for Template."""
 
+_MISSING_TEMPLATE_EQ = False  # 🎉
+"""True if the cpython prototype is missing an updated __eq__ for Template."""
 
-class Template:
-    args: Sequence[str | Interpolation]
+_MISSING_TEMPLATE_HASH = False  # 🎉
+"""True if the cpython prototype is missing __hash__ for Template."""
 
-    __match_args__ = ("args",)
+_MISSING_INTERLEAVING = False  # 🎉
+"""True if the cpython prototype doesn't interleave strings and interpolations."""
 
-    def __init__(self, *args: str | Interpolation):
-        self.args = _interleave(*args)
+_MISSING_IMPLICIT_CONCAT = True
+"""True if the cpython prototype doesn't support implicit concatenatenation."""
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Template):
-            return NotImplemented
-        return self.args == other.args
+_INCORRECT_INIT_ARGS = False  # 🎉
+"""True if the cpython prototype doesn't have the correct __init__ arguments."""
 
-    def __add__(self, other: object) -> Template:
-        assert isinstance(self.args[-1], str)
-        if isinstance(other, str):
-            return Template(*self.args, other)
-        if isinstance(other, Template):
-            return Template(*self.args, *other.args)
-        return NotImplemented
+_BUG_INTERPOLATION_MATCH_ARGS = False  # 🎉
+"""True if the cpython prototype doesn't match the PEP 750 spec for Interpolation.__match_args__."""
 
-    def __radd__(self, other: object) -> Template:
-        if isinstance(other, str):
-            return Template(other, *self.args)
-        return NotImplemented
+_BUG_DEBUG_SPECIFIER = False  # 🎉
+"""True if the cpython prototype doesn't match the PEP 750 spec for debug specifier."""
 
+_BUG_DEBUG_SPECIFIER_WITH_FMT = True
+"""True if the cpython prototype doesn't match the PEP 750 spec for debug specifier with format."""
 
-def _interleave(*args: str | Interpolation) -> tuple[str | Interpolation]:
-    """
-    Ensure that every other element is a string.
+_INCORRECT_SYNTAX_ERROR_MESSAGE = False  # 🎉
+"""True if the cpython prototype doesn't match the PEP 750 spec for syntax error message."""
 
-    If necessary, insert an empty string between two interpolations, or at the
-    beginning or end of the sequence.
+_BUG_TEMPLATE_CONSTRUCTOR = False  # 🎉
+"""True if `Template.__init__()` doesn't match the PEP 750 spec."""
 
-    If necessary, concatenate two adjacent strings.
-    """
-    new_args = []
-    last_was_str = False
-    for arg in args:
-        if isinstance(arg, str):
-            if last_was_str:
-                new_args[-1] += arg
-            else:
-                new_args.append(arg)
-            last_was_str = True
-        elif isinstance(arg, Interpolation):
-            if not last_was_str:
-                new_args.append("")
-            new_args.append(arg)
-            last_was_str = False
-        else:
-            raise TypeError(f"unexpected type: {type(arg)}")
-    if not last_was_str:
-        new_args.append("")
-    return tuple(new_args)
+_BUG_NESTED_FORMAT_SPEC = False  # 🎉
+"""True if the cpython prototype doesn't support interpolations within format specifications."""
 
+_BUG_INTERPOLATION_CONSTRUCTOR_SEGFAULT = False  # 🎉
+"""True if invalid constructions of Interpolation lead to segfaults."""
 
-def t(*args: str | OldVersionOfInterpolation) -> Template:
-    """
-    Implement the proposed PEP 750 template string behavior, using the
-    older cpython implementation of tagged strings.
+_BUG_MANY_EXPRESSIONS = False  # 🎉
+"""True if the cpython prototype raises MemoryError for templates with >16 expressions."""
 
-    See test.py for examples of the expected behavior.
-    """
-
-    eo_args: list[str | Interpolation] = []
-    last_was_str: bool = False
-
-    for arg in args:
-        if isinstance(arg, OldVersionOfInterpolation):
-            if not last_was_str:
-                eo_args.append("")
-            print(arg)
-            # Work around a bug in the current reference implementation of
-            # PEP 750. Specifically, it doesn't always set the OldInterpolation.conv
-            # and OldInterpolation.format_spec attributes correctly:
-            #
-            # def args(*args):
-            #     return args
-            #
-            # Correct:
-            # >>> args"{42!r}"
-            # (InterpolationConcrete(getvalue=<function <interpolation> at 0xffff9341d850>, expr='42', conv='r', format_spec=None),)
-            #
-            # BUG:
-            # >>> args"{42:.2f}"
-            # (InterpolationConcrete(getvalue=<function <interpolation> at 0xffff9341d640>, expr='42', conv='.2f', format_spec=None),)
-            #
-            # Correct:
-            # >>> args"{42!r:.2f}"
-            # (InterpolationConcrete(getvalue=<function <interpolation> at 0xffff9341d850>, expr='42', conv='r', format_spec='.2f'),)
-            #
-            # The workaround here will work *unless* there's no conv and the
-            # format_spec happens to be exactly "a", "r", or "s". In that case,
-            # we will incorrectly interpret the format_spec as the conv. Oh well for now!
-            #
-            # -Dave
-
-            conv = None
-            format_spec = ""
-
-            if arg.conv is not None:
-                if arg.conv in ("a", "r", "s"):
-                    conv = arg.conv
-                    format_spec = arg.format_spec or ""
-                else:
-                    format_spec = arg.conv
-
-            value_interpolation = Interpolation(arg.getvalue(), arg.expr, conv, format_spec)  # type: ignore
-            eo_args.append(value_interpolation)
-            last_was_str = False
-        else:
-            eo_args.append(arg)
-            last_was_str = True
-
-    if not last_was_str:
-        eo_args.append("")
-
-    assert len(eo_args) >= 1
-    assert len(eo_args) % 2 == 1
-
-    return Template(*eo_args)
-
-
+__BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV = False  # 🎉
+"""True if the cpython prototype ignores the conversion specifier in Interpolation.__init__."""
 #
 # Debug utilities -- useful when developing some of these examples
 #

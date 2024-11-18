@@ -1,10 +1,17 @@
-import asyncio
+"""
+Implement 'asynchronous' f-string like behavior on top of t-strings.
 
-from . import Interpolation, Template
+See also `test_afstring.py`
+"""
+
+import inspect
+
+from templatelib import Interpolation, Template
+
 from .fstring import convert
 
 
-async def aformat(template: Template) -> str:
+async def async_f(template: Template) -> str:
     """
     Implement f-string formatting for async functions.
 
@@ -19,7 +26,7 @@ async def aformat(template: Template) -> str:
             case str() as s:
                 parts.append(s)
             case Interpolation(value, _, conv, format_spec):
-                if asyncio.iscoroutinefunction(value):
+                if inspect.iscoroutinefunction(value):
                     value = await value()
                 elif callable(value):
                     value = value()

@@ -1,8 +1,9 @@
 from typing import Mapping, Sequence
 
 import pytest
+from templatelib import Template
 
-from . import Template, t
+from . import _BUG_CONSTANT_TEMPLATE
 from .web import Element, HTMLParseError, html
 
 # ---------------------------------------------------------------------------
@@ -88,18 +89,21 @@ def test_element_child_str_escape():
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_empty():
     template: Template = t""
     with pytest.raises(HTMLParseError):
         element = html(template)
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_only_text():
     template: Template = t"Hello, world!"
     with pytest.raises(HTMLParseError):
         element = html(template)
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_self_closing_tag():
     template: Template = t"<br />"
     element = html(template)
@@ -107,6 +111,7 @@ def test_html_self_closing_tag():
     assert element == expected
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_simple_p():
     template: Template = t"<p>Hello, world!</p>"
     element = html(template)
@@ -130,6 +135,7 @@ def test_html_p_text_interpolation_escape():
     assert element == expected
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_nested_safe_text():
     good = html(t"<script>alert('good')</script>")
     template: Template = t"<p>{good}</p>"
@@ -138,6 +144,7 @@ def test_html_nested_safe_text():
     assert element == expected
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_nested_template_text():
     good = t"<script>alert('good')</script>"
     template: Template = t"<p>{good}</p>"
@@ -153,6 +160,7 @@ def test_html_p_with_attributes():
     assert element == expected
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_nested_elements():
     template: Template = t"<div><p>Hello, world!</p></div>"
     element = html(template)
@@ -160,6 +168,7 @@ def test_html_nested_elements():
     assert element == expected
 
 
+@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_html_many_nested_elements():
     template: Template = t"""
     <div>

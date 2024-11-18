@@ -1,4 +1,7 @@
-from . import Template, t
+import pytest
+from templatelib import Template
+
+from . import _MISSING_TEMPLATE_EQ
 from .reuse import Binder, Formatter
 
 
@@ -9,6 +12,7 @@ def test_formatter():
     assert formatted == "The Roquefort costs $15.70"
 
 
+@pytest.mark.skipif(_MISSING_TEMPLATE_EQ, reason="Template equality not available")
 def test_binder():
     template: Template = t"The {'cheese'} costs ${'amount':,.2f}"
     binder = Binder(template)

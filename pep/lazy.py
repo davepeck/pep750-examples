@@ -1,6 +1,7 @@
 """Examples of lazy evaluation in templates."""
 
-from . import Template
+from templatelib import Template
+
 from .fstring import convert
 
 
