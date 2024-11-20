@@ -1,7 +1,55 @@
 import pytest
 from templatelib import Interpolation, Template
 
-from .format import from_format
+from .format import _split_field_name, from_format
+
+
+def test_split_field_name_simple():
+    key, rest = _split_field_name("name")
+    assert key == "name"
+    assert rest == ""
+
+
+def test_split_field_name_dot():
+    key, rest = _split_field_name("name.attr")
+    assert key == "name"
+    assert rest == ".attr"
+
+
+def test_split_field_name_bracket():
+    key, rest = _split_field_name("name[0]")
+    assert key == "name"
+    assert rest == "[0]"
+
+
+def test_split_field_name_dot_bracket():
+    key, rest = _split_field_name("name.attr[0]")
+    assert key == "name"
+    assert rest == ".attr[0]"
+
+
+def test_split_field_name_bracket_dot():
+    key, rest = _split_field_name("name[0].attr")
+    assert key == "name"
+    assert rest == "[0].attr"
+
+
+def test_split_field_name_bracket_bracket():
+    key, rest = _split_field_name("name[0][1]")
+    assert key == "name"
+    assert rest == "[0][1]"
+
+
+def test_split_field_name_empty_key_dot():
+    key, rest = _split_field_name(".attr")
+    assert key == ""
+    assert rest == ".attr"
+
+
+def test_split_field_name_empty_key_bracket():
+    key, rest = _split_field_name("[0]")
+    assert key == ""
+    assert rest == "[0]"
 
 
 def _interpolation_almost_eq(i1: Interpolation, i2: Interpolation) -> bool:
@@ -99,16 +147,9 @@ def test_from_format_complex_manual_index_interpolation():
     assert _almost_eq(made, expected)
 
 
-def test_from_format_array_index_interpolation():
+def test_from_format_key_array_index_interpolation():
     name = "world"
     made: Template = from_format("Hello, {a[1]}!", a=[99, name])
-    expected: Template = t"Hello, {name}!"
-    assert _almost_eq(made, expected)
-
-
-def test_from_format_dotted_key_interpolation():
-    name = "world"
-    made: Template = from_format("Hello, {a.b}!", a=type("Namespace", (), {"b": name}))
     expected: Template = t"Hello, {name}!"
     assert _almost_eq(made, expected)
 
@@ -116,6 +157,90 @@ def test_from_format_dotted_key_interpolation():
 def test_from_format_auto_array_index_interpolation():
     name = "world"
     made: Template = from_format("Hello, {[1]}!", [99, name])
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_manual_array_index_interpolation():
+    name = "world"
+    made: Template = from_format("Hello, {0[1]}!", [99, name])
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_key_dot_interpolation():
+    name = "world"
+    made: Template = from_format("Hello, {a.b}!", a=type("Namespace", (), {"b": name}))
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_auto_dot_interpolation():
+    name = "world"
+    made: Template = from_format("Hello, {.b}!", type("Namespace", (), {"b": name}))
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_manual_dot_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {1.b}!", "nope", type("Namespace", (), {"b": name})
+    )
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_key_dot_array_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {a.b[1]}!", a=type("Namespace", (), {"b": [99, name]})
+    )
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_auto_dot_array_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {.b[1]}!", type("Namespace", (), {"b": [99, name]})
+    )
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_manual_dot_array_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {1.b[1]}!", "nope", type("Namespace", (), {"b": [99, name]})
+    )
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_key_array_dot_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {a[1].b}!", a=[99, type("Namespace", (), {"b": name})]
+    )
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_auto_array_dot_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {[1].b}!", [99, type("Namespace", (), {"b": name})]
+    )
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_manual_array_dot_interpolation():
+    name = "world"
+    made: Template = from_format(
+        "Hello, {0[1].b}!", [99, type("Namespace", (), {"b": name})]
+    )
     expected: Template = t"Hello, {name}!"
     assert _almost_eq(made, expected)
 
