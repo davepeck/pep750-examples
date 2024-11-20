@@ -1,139 +1,7 @@
 import pytest
 from templatelib import Interpolation, Template
 
-from .format import _parse_fmt_string, from_format
-
-#
-# Test the _parse_fmt_string(...) helper function
-#
-
-
-def test_parse_fmt_string_empty():
-    assert _parse_fmt_string("") == ()
-
-
-def test_parse_fmt_string_simple():
-    assert _parse_fmt_string("Hello!") == ("Hello!",)
-
-
-def test_parse_fmt_string_simple_key_interpolation():
-    assert _parse_fmt_string("{name}") == ((None, "name", "", None),)
-
-
-def test_parse_fmt_string_complex_key_interpolation():
-    assert _parse_fmt_string("{name!s:.2f}") == ((None, "name", ".2f", "s"),)
-
-
-def test_parse_fmt_string_simple_auto_index_interpolation():
-    assert _parse_fmt_string("{}") == ((0, None, "", None),)
-
-
-def test_parse_fmt_string_complex_auto_index_interpolation():
-    assert _parse_fmt_string("{!s:.2f}") == ((0, None, ".2f", "s"),)
-
-
-def test_parse_fmt_string_simple_manual_index_interpolation():
-    assert _parse_fmt_string("{1}") == ((1, None, "", None),)
-
-
-def test_parse_fmt_string_complex_manual_index_interpolation():
-    assert _parse_fmt_string("{1!s:.2f}") == ((1, None, ".2f", "s"),)
-
-
-def test_parse_fmt_string_multiple_auto_index_interpolations():
-    assert _parse_fmt_string("{}{}") == (
-        (0, None, "", None),
-        (1, None, "", None),
-    )
-
-
-def test_parse_fmt_string_multiple_manual_index_interpolations():
-    assert _parse_fmt_string("{1}{0}") == (
-        (1, None, "", None),
-        (0, None, "", None),
-    )
-
-
-def test_parse_fmt_string_interleaved_static_and_auto_index():
-    assert _parse_fmt_string("Hello, {}! What {}?") == (
-        "Hello, ",
-        (0, None, "", None),
-        "! What ",
-        (1, None, "", None),
-        "?",
-    )
-
-
-def test_parse_fmt_string_interleaved_static_and_manual_index():
-    assert _parse_fmt_string("Hello, {2}! What {17}?") == (
-        "Hello, ",
-        (2, None, "", None),
-        "! What ",
-        (17, None, "", None),
-        "?",
-    )
-
-
-def test_parse_fmt_string_invalid_auto_to_manual_index():
-    with pytest.raises(ValueError):
-        _ = _parse_fmt_string("{}{1}")
-
-
-def test_parse_fmt_string_invalid_manual_to_auto_index():
-    with pytest.raises(ValueError):
-        _ = _parse_fmt_string("{1}{}")
-
-
-def test_parse_fmt_string_invalid_conversion_spec():
-    with pytest.raises(ValueError):
-        _ = _parse_fmt_string("{name!z}")
-
-
-def test_parse_fmt_string_invalid_conversion_spec_too_many_chars():
-    with pytest.raises(ValueError):
-        result = _parse_fmt_string("{name!ss}")
-        print(result)
-
-
-def test_fmt_string_mixed_static_auto_and_key_interpolations():
-    assert _parse_fmt_string("Hello, {}{name}!") == (
-        "Hello, ",
-        (0, None, "", None),
-        (None, "name", "", None),
-        "!",
-    )
-
-
-def test_fmt_string_mixed_static_manual_and_key_interpolations():
-    assert _parse_fmt_string("Hello, {1}{name}!") == (
-        "Hello, ",
-        (1, None, "", None),
-        (None, "name", "", None),
-        "!",
-    )
-
-
-def test_parse_fmt_string_complex():
-    assert _parse_fmt_string("{}{wow}Hello, {}{name!s:.2f}!{:fun}") == (
-        (0, None, "", None),
-        (None, "wow", "", None),
-        "Hello, ",
-        (1, None, "", None),
-        (None, "name", ".2f", "s"),
-        "!",
-        (2, None, "fun", None),
-    )
-
-
-def test_parse_fmt_string_nested_interpolations():
-    with pytest.raises(NotImplementedError):
-        parsed = _parse_fmt_string("{name:{fmt}}")
-        print(parsed)
-
-
-#
-# Test the fancy from_format(...) function
-#
+from .format import from_format
 
 
 def _interpolation_almost_eq(i1: Interpolation, i2: Interpolation) -> bool:
@@ -299,6 +167,35 @@ def test_from_format_complex():
     assert _almost_eq(made, expected)
 
 
-def test_from_format_nested_interpolations():
-    with pytest.raises(NotImplementedError):
-        _ = from_format("{name:{fmt}}", name="world", fmt=".2f")
+def test_from_format_format_spec_with_full_interpolation():
+    number = 42
+    fmt = ".2f"
+    made: Template = from_format("{number:{fmt}}", number=number, fmt=fmt)
+    expected: Template = t"{number:{fmt}}"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_format_spec_with_part_interpolation():
+    number = 42
+    precision = 2
+    made: Template = from_format(
+        "{number:.{precision}f}", number=number, precision=precision
+    )
+    expected: Template = t"{number:.{precision}f}"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_format_spec_with_multiple_interpolations():
+    number = 42
+    dot = "."
+    precision = 2
+    kind = "f"
+    made: Template = from_format(
+        "{number:{dot}{precision}{kind}}",
+        number=number,
+        dot=dot,
+        precision=precision,
+        kind=kind,
+    )
+    expected: Template = t"{number:{dot}{precision}{kind}}"
+    assert _almost_eq(made, expected)
