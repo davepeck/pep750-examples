@@ -101,7 +101,7 @@ as_template = from_format(old_style, 42, name="Alice")
 assert f(as_template) == "Thank you Alice for spending $42.00."
 ```
 
-The `from_format()` function supports essentially all the features of old-style format strings, including positional and keyword arguments, automatic and manual field numbering, format specifiers, and more.
+The `from_format()` function supports essentially all the features of old-style format strings, including positional and keyword arguments, automatic and manual field numbering, index and dot interpolation notation, nested format specifiers, and more.
 
 
 ### HTML Templating
