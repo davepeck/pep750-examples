@@ -99,6 +99,27 @@ def test_from_format_complex_manual_index_interpolation():
     assert _almost_eq(made, expected)
 
 
+def test_from_format_array_index_interpolation():
+    name = "world"
+    made: Template = from_format("Hello, {a[1]}!", a=[99, name])
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_dotted_key_interpolation():
+    name = "world"
+    made: Template = from_format("Hello, {a.b}!", a=type("Namespace", (), {"b": name}))
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
+def test_from_format_auto_array_index_interpolation():
+    name = "world"
+    made: Template = from_format("Hello, {[1]}!", [99, name])
+    expected: Template = t"Hello, {name}!"
+    assert _almost_eq(made, expected)
+
+
 def test_from_format_multiple_auto_index_interpolations():
     made: Template = from_format("{}{}", 99, "world")
     expected: Template = t"{99}{'world'}"
