@@ -23,6 +23,8 @@ Python 3.14.0a1
 
 Congrats; you're good to go!
 
+> **Quick Try**: Want to experiment with just the template string syntax? Try the [browser-based Python console](https://koxudaxi.github.io/pyodide/tstrings/console.html) (powered by [@koxudaxi's Pyodide with template strings support](https://github.com/koxudaxi/pyodide/tree/support-tstrings)).
+
 ## A Word About the Code
 
 This repository builds on top of the @lysnikolaou's [cpython fork implementing t-strings](https://github.com/lysnikolaou/cpython/tree/tstrings).
