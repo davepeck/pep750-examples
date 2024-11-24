@@ -24,6 +24,7 @@ from . import (
     _MISSING_TEMPLATE_ADD_RADD,
     _MISSING_TEMPLATE_EQ,
     _MISSING_TEMPLATE_HASH,
+    _MISSING_TEMPLATE_PROPERTIES,
 )
 
 
@@ -833,3 +834,199 @@ def test_template_with_many_expressions():
             isinstance(template.args[j], Interpolation)
             for j in range(1, len(template.args), 2)
         )
+
+
+def test_combined_string_prefixes():
+    """Test various combinations of string prefixes"""
+    # Valid combinations
+    name = "World"
+    template = rt"Hello {name}\n"  # r and t combined
+    assert isinstance(template, Template)
+
+    # Invalid combinations should raise SyntaxError
+    with pytest.raises(SyntaxError):
+        exec('ft"Invalid"')  # f and t cannot be combined
+    with pytest.raises(SyntaxError):
+        exec('bt"Invalid"')  # b and t cannot be combined
+    with pytest.raises(SyntaxError):
+        exec('ut"Invalid"')  # u and t cannot be combined
+
+
+def test_template_ordering_not_supported():
+    """Test that Template does not support ordering operations"""
+    t1 = t"Hello"
+    t2 = t"World"
+
+    with pytest.raises(TypeError):
+        _ = t1 < t2
+    with pytest.raises(TypeError):
+        _ = t1 <= t2
+    with pytest.raises(TypeError):
+        _ = t1 > t2
+    with pytest.raises(TypeError):
+        _ = t1 >= t2
+
+
+def test_template_str_representation():
+    """Test that Template does not provide a specialized __str__ implementation"""
+    template = t"Hello {42}"
+    # Should use object.__str__, not convert to final string
+    assert str(template) == object.__str__(template)
+
+
+def test_template_with_exception_handling():
+    """Test that exceptions in interpolations are properly raised"""
+
+    def raises_value_error():
+        raise ValueError("test error")
+
+    with pytest.raises(ValueError, match="test error"):
+        _ = t"Error: {raises_value_error()}"
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_convenience_properties_exist():
+    """Test that Template has the required convenience properties"""
+    template = t"test"
+
+    # Check if properties exist
+    assert hasattr(template, "strings"), "Template.strings property is missing"
+    assert hasattr(
+        template, "interpolations"
+    ), "Template.interpolations property is missing"
+    assert hasattr(template, "values"), "Template.values property is missing"
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_property_types():
+    """Test that Template properties return correct types"""
+    template = t"Hello {42}"
+
+    # Check return types
+    assert isinstance(
+        getattr(template, "strings", None), tuple
+    ), "strings should return tuple"
+    assert isinstance(
+        getattr(template, "interpolations", None), tuple
+    ), "interpolations should return tuple"
+    assert isinstance(
+        getattr(template, "values", None), tuple
+    ), "values should return tuple"
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_property_contents():
+    """Test that Template properties contain correct types of elements"""
+    name = "World"
+    template = t"Hello {name}!"
+
+    # Check element types in strings
+    strings = getattr(template, "strings", ())
+    assert all(isinstance(s, str) for s in strings), "strings should contain only str"
+
+    # Check element types in interpolations
+    interpolations = getattr(template, "interpolations", ())
+    assert all(
+        isinstance(i, Interpolation) for i in interpolations
+    ), "interpolations should contain only Interpolation"
+
+    # Check element types in values
+    values = getattr(template, "values", ())
+    assert isinstance(values, tuple), "values should be a tuple"
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_strings_property_basic():
+    """Test the basic functionality of Template.strings property"""
+    template = t"Hello {42} World"
+    assert template.strings == ("Hello ", " World")
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_strings_property_empty():
+    """Test Template.strings property with empty template"""
+    template = t""
+    assert template.strings == ("",)
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_strings_property_only_interpolation():
+    """Test Template.strings property with only interpolation"""
+    template = t"{42}"
+    assert template.strings == ("", "")
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_interpolations_property_basic():
+    """Test the basic functionality of Template.interpolations property"""
+    x = 42
+    template = t"Value: {x}"
+    interpolations = template.interpolations
+    assert len(interpolations) == 1
+    assert isinstance(interpolations[0], Interpolation)
+    assert interpolations[0].value == 42
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_interpolations_property_multiple():
+    """Test Template.interpolations property with multiple interpolations"""
+    x, y = 1, 2
+    template = t"{x} + {y} = {x + y}"
+    interpolations = template.interpolations
+    assert len(interpolations) == 3
+    assert all(isinstance(i, Interpolation) for i in interpolations)
+    assert [i.value for i in interpolations] == [1, 2, 3]
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_interpolations_property_empty():
+    """Test Template.interpolations property with no interpolations"""
+    template = t"Hello World"
+    assert template.interpolations == ()
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_values_property_basic():
+    """Test the basic functionality of Template.values property"""
+    x = 42
+    template = t"Value: {x}"
+    assert template.values == (42,)
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_values_property_multiple():
+    """Test Template.values property with multiple interpolations"""
+    x, y = 1, 2
+    template = t"{x} + {y} = {x + y}"
+    assert template.values == (1, 2, 3)
+
+
+@pytest.mark.skipif(
+    _MISSING_TEMPLATE_PROPERTIES, reason="Template properties not implemented"
+)
+def test_template_values_property_empty():
+    """Test Template.values property with no interpolations"""
+    template = t"Hello World"
+    assert template.values == ()

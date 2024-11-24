@@ -106,6 +106,7 @@ assert f(as_template) == "Thank you Alice for spending $42.00."
 The `from_format()` function supports essentially all the features of old-style format strings, including positional and keyword arguments, automatic and manual field numbering, index and dot interpolation notation, nested format specifiers, and more.
 
 
+
 ### HTML Templating
 
 There are several short "HTML templating" examples in [PEP 750](https://pep-previews--4062.org.readthedocs.build/pep-0750/).

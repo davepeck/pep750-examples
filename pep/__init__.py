@@ -58,6 +58,9 @@ _BUG_MANY_EXPRESSIONS = False  # 🎉
 
 __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV = False  # 🎉
 """True if the cpython prototype ignores the conversion specifier in Interpolation.__init__."""
+
+_MISSING_TEMPLATE_PROPERTIES = True
+"""True if the cpython prototype is missing Template convenience properties (strings, interpolations, values)."""
 #
 # Debug utilities -- useful when developing some of these examples
 #
