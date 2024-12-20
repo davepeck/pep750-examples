@@ -24,6 +24,8 @@ from typing import Callable, Literal, Mapping, Sequence, cast
 
 from templatelib import Interpolation, Template
 
+from . import pairs
+
 
 class HTMLParseError(Exception):
     """An error occurred while parsing an HTML template."""
@@ -294,26 +296,23 @@ def html(template: Template) -> Element:
     components: dict[str, Callable] = {}
 
     # TODO: consider moving all of this into an overridden parser.feed() method?
-    for arg in template.args:
-        match arg:
-            case str() as s:
-                # String content is easy: just continue to parse it as-is
-                parser.feed(s)
-            case Interpolation() as i:
-                # Interpolations are more complex. They can be strings, dicts,
-                # Elements, or Templates. It matters *where* in the HTML grammar
-                # they appear, so we need to handle each case separately.
-                if parser.in_start_tag:
-                    value = _process_start_tag_interpolation(i.value)
-                else:
-                    value = i.value
-                    # Handle component interpolations
-                    if callable(value):
-                        components[_make_component_name(i.expr)] = value
-                        value = _make_component_name(i.expr)
-                    # TODO what if we're in an end tag?
-                    value = _process_content_interpolation(value)
-                parser.feed(value)
+    for i, s in pairs(template):
+        if i is not None:
+            # Interpolations are more complex. They can be strings, dicts,
+            # Elements, or Templates. It matters *where* in the HTML grammar
+            # they appear, so we need to handle each case separately.
+            if parser.in_start_tag:
+                value = _process_start_tag_interpolation(i.value)
+            else:
+                value = i.value
+                # Handle component interpolations
+                if callable(value):
+                    components[_make_component_name(i.expr)] = value
+                    value = _make_component_name(i.expr)
+                # TODO what if we're in an end tag?
+                value = _process_content_interpolation(value)
+            parser.feed(value)
+        parser.feed(s)
     parser.close()
     if not parser.root:
         raise HTMLParseError("No root element")

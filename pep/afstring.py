@@ -6,8 +6,9 @@ See also `test_afstring.py`
 
 import inspect
 
-from templatelib import Interpolation, Template
+from templatelib import Template
 
+from . import pairs
 from .fstring import convert
 
 
@@ -21,16 +22,14 @@ async def async_f(template: Template) -> str:
     formatting it.
     """
     parts = []
-    for arg in template.args:
-        match arg:
-            case str() as s:
-                parts.append(s)
-            case Interpolation(value, _, conv, format_spec):
-                if inspect.iscoroutinefunction(value):
-                    value = await value()
-                elif callable(value):
-                    value = value()
-                value = convert(value, conv)
-                value = format(value, format_spec)
-                parts.append(value)
+    for i, s in pairs(template):
+        if i is not None:
+            if inspect.iscoroutinefunction(i.value):
+                value = await i.value()
+            elif callable(i.value):
+                value = i.value()
+            value = convert(value, i.conv)
+            value = format(value, i.format_spec)
+            parts.append(value)
+        parts.append(s)
     return "".join(parts)

@@ -12,6 +12,7 @@ from typing import Any, Literal, Mapping, Protocol
 
 from templatelib import Interpolation, Template
 
+from . import pairs
 from .fstring import f
 
 
@@ -35,11 +36,7 @@ class TemplateMessage:
 
     @property
     def values(self) -> Mapping[str, object]:
-        return {
-            arg.expr: arg.value
-            for arg in self.template.args
-            if isinstance(arg, Interpolation)
-        }
+        return {i.expr: i.value for i, _ in pairs(self.template) if i is not None}
 
     @property
     def data(self) -> Mapping[str, object]:
@@ -103,11 +100,7 @@ class ValuesFormatter(TemplateFormatterBase):
     """A formatter that formats structured output from a Template's values."""
 
     def values(self, template: Template) -> Mapping[str, object]:
-        return {
-            arg.expr: arg.value
-            for arg in template.args
-            if isinstance(arg, Interpolation)
-        }
+        return {i.expr: i.value for i, _ in pairs(template) if i is not None}
 
     def format(self, record: LogRecord) -> str:
         msg = record.msg
