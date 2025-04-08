@@ -1,4 +1,4 @@
-FROM ghcr.io/davepeck/python:davepeck-ts-iter-fix
+FROM ghcr.io/davepeck/python:tstrings-rollup-8a89
 
 # # Allow PYO3 to build even though the configured interpreter version (3.14)
 # # is greater than PYO3's stated limit (3.12)
