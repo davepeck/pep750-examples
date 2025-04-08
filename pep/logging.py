@@ -8,9 +8,8 @@ information.
 
 from json import JSONEncoder
 from logging import Formatter, LogRecord
-from typing import Any, Literal, Mapping, Protocol
-
 from string.templatelib import Interpolation, Template
+from typing import Any, Literal, Mapping, Protocol
 
 from .fstring import f
 

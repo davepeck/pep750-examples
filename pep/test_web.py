@@ -1,7 +1,7 @@
+from string.templatelib import Template
 from typing import Mapping, Sequence
 
 import pytest
-from string.templatelib import Template
 
 from . import _BUG_CONSTANT_TEMPLATE
 from .web import Element, HTMLParseError, html

@@ -5,7 +5,6 @@ See also `test_afstring.py`
 """
 
 import inspect
-
 from string.templatelib import Interpolation, Template
 
 from .fstring import convert

@@ -5,9 +5,8 @@ Example code to take an old-school format string intended to be used with the
 
 import re
 import string
-from typing import Literal
-
 from string.templatelib import Interpolation, Template
+from typing import Literal
 
 
 def _split_field_name(field_name: str) -> tuple[str, str]:

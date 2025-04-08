@@ -1,5 +1,6 @@
-import pytest
 from string.templatelib import Template
+
+import pytest
 
 from .reuse import Binder, Formatter
 

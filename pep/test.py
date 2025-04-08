@@ -6,9 +6,9 @@ See the __init__.py for a more detailed explanation.
 """
 
 import asyncio
+from string.templatelib import Interpolation, Template
 
 import pytest
-from string.templatelib import Interpolation, Template
 
 from . import (
     __BUG_INTERPOLATION_CONSTRUCTOR_IGNORE_CONV,
@@ -30,7 +30,9 @@ from . import (
 def test_empty():
     template = t""
     assert isinstance(template, Template)
-    assert template.strings == ("",)  # This will fail if interleaving is not implemented
+    assert template.strings == (
+        "",
+    )  # This will fail if interleaving is not implemented
     assert template.interpolations == ()
     assert list(template) == []
 
@@ -469,6 +471,7 @@ def test_template_raw_template_strings_1():
     assert len(template.interpolations) == 1
     assert template.interpolations[0].value == trade
 
+
 @pytest.mark.skipif(
     _INCORRECT_SYNTAX_ERROR_MESSAGE,
     reason="Template syntax error message not implemented",
@@ -575,6 +578,7 @@ def test_template_constructor_with_only_interpolations():
     assert len(template.interpolations) == 2
     assert template.interpolations[0] is x
     assert template.interpolations[1] is y
+
 
 @pytest.mark.skipif(
     _BUG_TEMPLATE_CONSTRUCTOR, reason="Template constructor not fully implemented"

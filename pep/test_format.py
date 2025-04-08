@@ -1,5 +1,6 @@
-import pytest
 from string.templatelib import Interpolation, Template
+
+import pytest
 
 from .format import _split_field_name, from_format
 
@@ -60,7 +61,11 @@ def _interpolation_almost_eq(i1: Interpolation, i2: Interpolation) -> bool:
     value, conversion, and format_spec fields. The expr field is not used
     in the comparison.
     """
-    return (i1.value, i1.conversion, i1.format_spec) == (i2.value, i2.conversion, i2.format_spec)
+    return (i1.value, i1.conversion, i1.format_spec) == (
+        i2.value,
+        i2.conversion,
+        i2.format_spec,
+    )
 
 
 def _almost_eq(t1: Template, t2: Template) -> bool:
@@ -85,7 +90,6 @@ def _almost_eq(t1: Template, t2: Template) -> bool:
             return False
 
     return True
-
 
 
 def test_from_format_empty():

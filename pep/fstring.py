@@ -9,9 +9,8 @@ first place.
 See also `test_fstring.py`
 """
 
-from typing import Literal
-
 from string.templatelib import Interpolation, Template
+from typing import Literal
 
 
 def convert(value: object, conversion: Literal["a", "r", "s"] | None) -> object:

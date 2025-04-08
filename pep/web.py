@@ -20,9 +20,8 @@ import re
 from dataclasses import dataclass, field
 from html import escape
 from html.parser import HTMLParser
-from typing import Callable, Literal, Mapping, Sequence, cast
-
 from string.templatelib import Interpolation, Template
+from typing import Callable, Literal, Mapping, Sequence, cast
 
 
 class HTMLParseError(Exception):

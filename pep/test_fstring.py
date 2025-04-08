@@ -2,8 +2,9 @@
 Test our 'implementation' of f-string behavior as seen in PEP 750.
 """
 
-import pytest
 from string.templatelib import Template
+
+import pytest
 
 from . import (
     _BUG_CONSTANT_TEMPLATE,

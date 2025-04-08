@@ -2,7 +2,6 @@ import io
 import logging
 from decimal import Decimal
 from json import JSONEncoder
-
 from string.templatelib import Template
 
 from .logging import (
