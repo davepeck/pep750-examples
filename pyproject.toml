@@ -9,6 +9,7 @@ python_files = ["test_*.py", "test.py"]
 asyncio_mode = "auto"
 testpaths = ["pep"]
 filterwarnings = ["ignore::DeprecationWarning"]
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.isort]
 profile = "black"

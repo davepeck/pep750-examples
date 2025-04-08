@@ -3,7 +3,7 @@ import logging
 from decimal import Decimal
 from json import JSONEncoder
 
-from templatelib import Template
+from string.templatelib import Template
 
 from .logging import (
     CombinedFormatter,

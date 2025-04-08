@@ -1,4 +1,4 @@
-from templatelib import Template
+from string.templatelib import Template
 
 from .lazy import format_some
 

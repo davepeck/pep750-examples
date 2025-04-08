@@ -1,5 +1,5 @@
 import pytest
-from templatelib import Interpolation, Template
+from string.templatelib import Interpolation, Template
 
 from .format import _split_field_name, from_format
 
@@ -60,7 +60,7 @@ def _interpolation_almost_eq(i1: Interpolation, i2: Interpolation) -> bool:
     value, conversion, and format_spec fields. The expr field is not used
     in the comparison.
     """
-    return (i1.value, i1.conv, i1.format_spec) == (i2.value, i2.conv, i2.format_spec)
+    return (i1.value, i1.conversion, i1.format_spec) == (i2.value, i2.conversion, i2.format_spec)
 
 
 def _almost_eq(t1: Template, t2: Template) -> bool:
@@ -74,23 +74,18 @@ def _almost_eq(t1: Template, t2: Template) -> bool:
     and f-strings to be an expression, like "{0 + 1}" -- that's just a key
     for str.format() to use.)
     """
-    if len(t1.args) != len(t2.args):
+    if t1.strings != t2.strings:
         return False
 
-    for a1, a2 in zip(t1.args, t2.args):
-        if isinstance(a1, str):
-            if not isinstance(a2, str):
-                return False
-            if a1 != a2:
-                return False
-        else:
-            assert isinstance(a1, Interpolation)
-            if not isinstance(a2, Interpolation):
-                return False
+    if len(t1.interpolations) != len(t2.interpolations):
+        return False
 
-            if not _interpolation_almost_eq(a1, a2):
-                return False
+    for i1, i2 in zip(t1.interpolations, t2.interpolations):
+        if not _interpolation_almost_eq(i1, i2):
+            return False
+
     return True
+
 
 
 def test_from_format_empty():

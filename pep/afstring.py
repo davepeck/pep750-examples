@@ -6,7 +6,7 @@ See also `test_afstring.py`
 
 import inspect
 
-from templatelib import Interpolation, Template
+from string.templatelib import Interpolation, Template
 
 from .fstring import convert
 
@@ -21,8 +21,8 @@ async def async_f(template: Template) -> str:
     formatting it.
     """
     parts = []
-    for arg in template.args:
-        match arg:
+    for item in template:
+        match item:
             case str() as s:
                 parts.append(s)
             case Interpolation(value, _, conv, format_spec):

@@ -17,12 +17,6 @@ _BUG_SINGLE_INTERPOLATION = False  # 🎉
 _MISSING_TEMPLATE_ADD_RADD = False  # 🎉
 """True if the cpython prototype is missing __add__ and __radd__ for Template."""
 
-_MISSING_TEMPLATE_EQ = False  # 🎉
-"""True if the cpython prototype is missing an updated __eq__ for Template."""
-
-_MISSING_TEMPLATE_HASH = False  # 🎉
-"""True if the cpython prototype is missing __hash__ for Template."""
-
 _MISSING_INTERLEAVING = False  # 🎉
 """True if the cpython prototype doesn't interleave strings and interpolations."""
 

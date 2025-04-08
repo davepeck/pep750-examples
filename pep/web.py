@@ -22,7 +22,7 @@ from html import escape
 from html.parser import HTMLParser
 from typing import Callable, Literal, Mapping, Sequence, cast
 
-from templatelib import Interpolation, Template
+from string.templatelib import Interpolation, Template
 
 
 class HTMLParseError(Exception):
@@ -294,8 +294,8 @@ def html(template: Template) -> Element:
     components: dict[str, Callable] = {}
 
     # TODO: consider moving all of this into an overridden parser.feed() method?
-    for arg in template.args:
-        match arg:
+    for item in template:
+        match item:
             case str() as s:
                 # String content is easy: just continue to parse it as-is
                 parser.feed(s)
@@ -309,8 +309,8 @@ def html(template: Template) -> Element:
                     value = i.value
                     # Handle component interpolations
                     if callable(value):
-                        components[_make_component_name(i.expr)] = value
-                        value = _make_component_name(i.expr)
+                        components[_make_component_name(i.expression)] = value
+                        value = _make_component_name(i.expression)
                     # TODO what if we're in an end tag?
                     value = _process_content_interpolation(value)
                 parser.feed(value)

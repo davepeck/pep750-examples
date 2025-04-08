@@ -1,4 +1,4 @@
-FROM koxudaxi/python:3.14.0a1-tstrings-b0dbe27-bullseye
+FROM ghcr.io/davepeck/python:davepeck-ts-iter-fix
 
 # # Allow PYO3 to build even though the configured interpreter version (3.14)
 # # is greater than PYO3's stated limit (3.12)

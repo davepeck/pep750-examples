@@ -10,7 +10,7 @@ from json import JSONEncoder
 from logging import Formatter, LogRecord
 from typing import Any, Literal, Mapping, Protocol
 
-from templatelib import Interpolation, Template
+from string.templatelib import Interpolation, Template
 
 from .fstring import f
 
@@ -36,9 +36,9 @@ class TemplateMessage:
     @property
     def values(self) -> Mapping[str, object]:
         return {
-            arg.expr: arg.value
-            for arg in self.template.args
-            if isinstance(arg, Interpolation)
+            item.expression: item.value
+            for item in self.template
+            if isinstance(item, Interpolation)
         }
 
     @property
@@ -104,9 +104,9 @@ class ValuesFormatter(TemplateFormatterBase):
 
     def values(self, template: Template) -> Mapping[str, object]:
         return {
-            arg.expr: arg.value
-            for arg in template.args
-            if isinstance(arg, Interpolation)
+            item.expression: item.value
+            for item in template
+            if isinstance(item, Interpolation)
         }
 
     def format(self, record: LogRecord) -> str:

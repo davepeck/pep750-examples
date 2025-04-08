@@ -7,7 +7,7 @@ behavior, where we can build up a template and then apply it to multiple
 values?
 """
 
-from templatelib import Interpolation, Template
+from string.templatelib import Interpolation, Template
 
 from .fstring import convert
 
@@ -23,23 +23,23 @@ class Formatter:
     def __init__(self, template: Template):
         """Construct a formatter for the provided template."""
         # Ensure that all interpolations are strings.
-        for arg in template.args:
-            if isinstance(arg, Interpolation):
-                if not isinstance(arg.value, str):
-                    raise ValueError(f"Non-string interpolation: {arg.value}")
+        for item in template:
+            if isinstance(item, Interpolation):
+                if not isinstance(item.value, str):
+                    raise ValueError(f"Non-string interpolation: {item.value}")
         self.template = template
 
     def format(self, **kwargs) -> str:
         """Render the t-string using the given values."""
         parts = []
-        for t_arg in self.template.args:
-            if isinstance(t_arg, str):
-                parts.append(t_arg)
+        for item in self.template:
+            if isinstance(item, str):
+                parts.append(item)
             else:
-                assert isinstance(t_arg.value, str)
-                value = kwargs[t_arg.value]
-                value = convert(value, t_arg.conv)
-                value = format(value, t_arg.format_spec)
+                assert isinstance(item.value, str)
+                value = kwargs[item.value]
+                value = convert(value, item.conversion)
+                value = format(value, item.format_spec)
                 parts.append(value)
         return "".join(parts)
 
@@ -55,24 +55,24 @@ class Binder:
     def __init__(self, template: Template):
         """Construct a binder for the provided template."""
         # Ensure that all interpolations are strings.
-        for arg in template.args:
-            if isinstance(arg, Interpolation):
-                if not isinstance(arg.value, str):
-                    raise ValueError(f"Non-string interpolation: {arg.value}")
+        for item in template:
+            if isinstance(item, Interpolation):
+                if not isinstance(item.value, str):
+                    raise ValueError(f"Non-string interpolation: {item.value}")
         self.template = template
 
     def bind(self, **kwargs) -> Template:
         """Bind values to the template."""
-        args = []
-        for t_arg in self.template.args:
-            if isinstance(t_arg, str):
-                args.append(t_arg)
+        items = []
+        for item in self.template:
+            if isinstance(item, str):
+                items.append(item)
             else:
-                assert isinstance(t_arg.value, str)
-                value = kwargs[t_arg.value]
-                expr = repr(t_arg.value)[1:-1]  # remove quotes from original expression
+                assert isinstance(item.value, str)
+                value = kwargs[item.value]
+                expr = repr(item.value)[1:-1]  # remove quotes from original expression
                 interpolation = Interpolation(
-                    value, expr, t_arg.conv, t_arg.format_spec
+                    value, expr, item.conversion, item.format_spec
                 )
-                args.append(interpolation)
-        return Template(*args)
+                items.append(interpolation)
+        return Template(*items)

@@ -1,7 +1,7 @@
 import asyncio
 
 import pytest
-from templatelib import Template
+from string.templatelib import Template
 
 from .afstring import async_f
 from .fstring import f

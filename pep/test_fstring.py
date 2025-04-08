@@ -3,7 +3,7 @@ Test our 'implementation' of f-string behavior as seen in PEP 750.
 """
 
 import pytest
-from templatelib import Template
+from string.templatelib import Template
 
 from . import (
     _BUG_CONSTANT_TEMPLATE,

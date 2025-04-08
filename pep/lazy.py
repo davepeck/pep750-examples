@@ -1,6 +1,6 @@
 """Examples of lazy evaluation in templates."""
 
-from templatelib import Template
+from string.templatelib import Template
 
 from .fstring import convert
 
@@ -18,15 +18,15 @@ def format_some(selector: str, template: Template, ignored: str = "***") -> str:
     unnecessary.
     """
     parts = []
-    for t_arg in template.args:
-        if isinstance(t_arg, str):
-            parts.append(t_arg)
+    for item in template:
+        if isinstance(item, str):
+            parts.append(item)
         else:
-            if t_arg.format_spec == selector:
-                value = t_arg.value
+            if item.format_spec == selector:
+                value = item.value
                 if callable(value):
                     value = value()
-                value = convert(value, t_arg.conv)
+                value = convert(value, item.conversion)
             else:
                 value = ignored
             parts.append(value)
