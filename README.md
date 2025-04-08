@@ -1,10 +1,10 @@
 # pep750-examples
 
-This repository contains full implementations of the code examples described in [PEP 750: Template Strings](https://pep-previews--4062.org.readthedocs.build/pep-0750/). It also includes a suite of tests to make sure the examples are correct.
+This repository contains full implementations of the code examples described in [PEP 750: Template Strings](https://peps.python.org/pep-0750/). It also includes a suite of tests to make sure the examples are correct.
 
 ## Running This Code
 
-This repo has a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14](https://github.com/lysnikolaou/cpython/tree/tstrings) that provides a prototype implementation of PEP 750.
+This repo has a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14](https://github.com/davepeck/tagstr-cpython/tree/dave/ts-iter-fix) that provides a prototype implementation of PEP 750.
 
 It's easy to run this code yourself:
 
@@ -27,7 +27,7 @@ Congrats; you're good to go!
 
 ## A Word About the Code
 
-This repository builds on top of the @lysnikolaou's [cpython fork implementing t-strings](https://github.com/lysnikolaou/cpython/tree/tstrings).
+This repository builds on top of the @lysnikolaou's [cpython fork implementing t-strings](https://github.com/davepeck/tagstr-cpython/tree/dave/ts-iter-fix).
 
 It uses @koxudaxi's [dockerfiles](https://github.com/pauleveritt/tagstr-site/actions/workflows/docker.yml) that package up that fork.
 
