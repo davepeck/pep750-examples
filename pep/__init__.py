@@ -20,7 +20,7 @@ _MISSING_TEMPLATE_ADD_RADD = False  # 🎉
 _MISSING_INTERLEAVING = False  # 🎉
 """True if the cpython prototype doesn't interleave strings and interpolations."""
 
-_MISSING_IMPLICIT_CONCAT = True
+_MISSING_IMPLICIT_CONCAT = False  # 🎉
 """True if the cpython prototype doesn't support implicit concatenatenation."""
 
 _INCORRECT_INIT_ARGS = False  # 🎉

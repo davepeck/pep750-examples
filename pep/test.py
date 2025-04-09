@@ -359,9 +359,6 @@ def test_template_constructor_interleaving_all_the_things():
     assert template.interpolations == (i1, i2, i3, i4)
 
 
-# TODO uncomment these when _MISSING_IMPLICIT_CONCAT is False
-
-# Implicit concat syntax is not supported whatsoever in the current PEP 750
 # def test_implicit_concat_str_template():
 #     template = "hello" t"world"
 #     assert isinstance(template, Template)
