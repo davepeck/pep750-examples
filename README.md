@@ -183,10 +183,10 @@ element = html(t'<img {attributes} />')
 assert str(element) == '<img src="shrubbery.jpg" alt="A shrubbery" />'
 ```
 
-Empty attributes are also supported:
+Boolean attributes are also supported:
 
 ```python
-attributes = {"type": "text", "required": None}
+attributes = {"type": "text", "required": True}
 element = html(t'<input {attributes} />')
 assert str(element) == '<input type="text" required />'
 ```
@@ -217,7 +217,7 @@ element = html(t"<{tag}>Hello, World!</{tag}>")
 assert str(element) == "<h1>Hello, World!</h1>"
 ```
 
-Tag name interpolation allows us to support a simple form of "components". For instance, we can define a `magic()` function that alters both the attributes and children of an element:
+Tag name interpolation allows us to support a simple form of "components". For instance, we can define a `Magic()` function that alters both the attributes and children of an element:
 
 ```python
 def Magic(attributes: Mapping[str, str | None], children: Sequence[str | Element]) -> Element:
@@ -231,4 +231,3 @@ assert str(element) == '<div id="wow" data-magic="yes"><b>FUN!</b>Magic!</div>'
 ```
 
 The `html()` template processing code sees that `{Magic}` is an interpolation, that it occurs in the tag position, and that its value is a `Callable`. As a result, `html()` calls `Magic()` with the interpolated children and attributes and uses the result returned _by_ `Magic()` as the final `Element`.
-
