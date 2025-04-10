@@ -359,54 +359,36 @@ def test_template_constructor_interleaving_all_the_things():
     assert template.interpolations == (i1, i2, i3, i4)
 
 
-# def test_implicit_concat_str_template():
-#     template = "hello" t"world"
-#     assert isinstance(template, Template)
-#     assert len(template.args) == 1
-#     assert isinstance(template.args[0], str)
-#     assert template.args[0] == "hello" + "world"
+def test_implicit_concat_str_template():
+    template = "hello" t"world"
+    assert isinstance(template, Template)
+    assert template.strings == ("helloworld",)
+    assert len(template.interpolations) == 0
 
 
-# def test_implicit_concat_template_str():
-#     template = t"hello" "world"
-#     assert isinstance(template, Template)
-#     assert len(template.args) == 1
-#     assert isinstance(template.args[0], str)
-#     assert template.args[0] == "hello" + "world"
+def test_implicit_concat_template_str():
+    template = t"hello" "world"
+    assert isinstance(template, Template)
+    assert template.strings == ("helloworld",)
+    assert len(template.interpolations) == 0
 
 
-# def test_implicit_concat_fstr_template():
-#     name = "world"
-#     template = f"hello {name}, " t"your name is {name}!"
-#     assert isinstance(template, Template)
-#     assert len(template.args) == 5
-#     assert isinstance(template.args[0], str)
-#     assert template.args[0] == "hello "
-#     assert isinstance(template.args[1], Interpolation)
-#     assert template.args[1].value == name
-#     assert isinstance(template.args[2], str)
-#     assert template.args[2] == ", " + "your name is "
-#     assert isinstance(template.args[3], Interpolation)
-#     assert template.args[3].value == name
-#     assert isinstance(template.args[4], str)
-#     assert template.args[4] == "!"
+def test_implicit_concat_fstr_template():
+    name = "world"
+    template = f"hello {name}, " t"your name is {name}!"
+    assert isinstance(template, Template)
+    assert template.strings == ("hello world, your name is ", "!")
+    assert len(template.interpolations) == 1
+    assert template.interpolations[0].value == name
 
 
-# def test_implicit_concat_template_fstr():
-#     name = "world"
-#     template = t"hello {name}, " f"your name is {name}!"
-#     assert isinstance(template, Template)
-#     assert len(template.args) == 5
-#     assert isinstance(template.args[0], str)
-#     assert template.args[0] == "hello "
-#     assert isinstance(template.args[1], Interpolation)
-#     assert template.args[1].value == name
-#     assert isinstance(template.args[2], str)
-#     assert template.args[2] == ", " + "your name is "
-#     assert isinstance(template.args[3], Interpolation)
-#     assert template.args[3].value == name
-#     assert isinstance(template.args[4], str)
-#     assert template.args[4] == "!"
+def test_implicit_concat_template_fstr():
+    name = "world"
+    template = t"hello {name}, " f"your name is {name}!"
+    assert isinstance(template, Template)
+    assert template.strings == ("hello ", ", your name is world!")
+    assert len(template.interpolations) == 1
+    assert template.interpolations[0].value == name
 
 
 @pytest.mark.skipif(
