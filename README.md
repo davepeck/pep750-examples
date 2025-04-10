@@ -4,7 +4,7 @@ This repository contains full implementations of the code examples described in 
 
 ## Running This Code
 
-This repo has a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14](https://github.com/davepeck/tagstr-cpython/tree/dave/ts-iter-fix) that provides a prototype implementation of PEP 750.
+This repo has a [devcontainer](https://containers.dev) definition that makes it easy to run the examples. The devcontainer includes a [fork of cpython 3.14a7+](https://github.com/lysnikolaou/cpython/tree/tstrings) that provides a prototype implementation of PEP 750.
 
 It's easy to run this code yourself:
 
@@ -16,20 +16,16 @@ After the container is initialized, make sure that everything works by opening u
 
 ```
 /workspaces/pep750-examples# python --version
-Python 3.14.0a1
+Python 3.14.0a7+
 /workspaces/pep750-examples# pytest
 ... (hopefully, all tests pass!) ...
 ```
 
 Congrats; you're good to go!
 
-> **Quick Try**: Want to experiment with just the template string syntax? Try the [browser-based Python console](https://koxudaxi.github.io/pyodide/tstrings/console.html) (powered by [@koxudaxi's Pyodide with template strings support](https://github.com/koxudaxi/pyodide/tree/support-tstrings)).
-
 ## A Word About the Code
 
-This repository builds on top of the @lysnikolaou's [cpython fork implementing t-strings](https://github.com/davepeck/tagstr-cpython/tree/dave/ts-iter-fix).
-
-It uses @koxudaxi's [dockerfiles](https://github.com/pauleveritt/tagstr-site/actions/workflows/docker.yml) that package up that fork.
+This repository builds on top of the @lysnikolaou's [cpython branch implementing t-strings](https://github.com/lysnikolaou/cpython/tree/tstrings).
 
 ### Linting, formatting, etc.
 
@@ -54,7 +50,7 @@ assert f(templated) == formatted
 ```
 See also [the tests](./pep/test_fstring.py).
 
-This [example is described in detail](https://pep-previews--4062.org.readthedocs.build/pep-0750/#example-implementing-f-strings-with-t-strings) in PEP 750.
+This [example is described in detail](https://peps.python.org/pep-0750/#example-implementing-f-strings-with-t-strings) in PEP 750.
 
 ### Structured Logging
 
@@ -87,7 +83,7 @@ logger.info(t"User {action}: {amount:.2f} {item}")
 
 See the tests in [`test_logging.py`](./pep/test_logging.py).
 
-This [example is described in detail](https://pep-previews--4062.org.readthedocs.build/pep-0750/#example-structured-logging) in PEP 750.
+This [example is described in detail](https://peps.python.org/pep-0750/#example-structured-logging) in PEP 750.
 
 
 ### Working with old-style format strings
@@ -108,7 +104,7 @@ The `from_format()` function supports essentially all the features of old-style 
 
 ### HTML Templating
 
-There are several short "HTML templating" examples in [PEP 750](https://pep-previews--4062.org.readthedocs.build/pep-0750/).
+There are several short "HTML templating" examples in [PEP 750](https://peps.python.org/pep-0750/).
 
 They all use a hypothetical `html()` function that parses template strings to an intermediate type, `Element`, and supports context-dependent processing of interpolations.
 
