@@ -6,38 +6,24 @@ from string.templatelib import Template
 
 import pytest
 
-from . import (
-    _BUG_CONSTANT_TEMPLATE,
-    _BUG_INTERPOLATION_MATCH_ARGS,
-    _BUG_SINGLE_INTERPOLATION,
-)
 from .fstring import f
 
 
-@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_empty():
     template: Template = t""
     assert f(template) == f""
 
 
-@pytest.mark.skipif(_BUG_CONSTANT_TEMPLATE, reason="Constant template bug")
 def test_simple():
     template: Template = t"hello"
     assert f(template) == f"hello"
 
 
-@pytest.mark.skipif(
-    _BUG_SINGLE_INTERPOLATION,
-    reason="Single interpolation outside of template bug",
-)
 def test_only_interpolation():
     template: Template = t"{42}"
     assert f(template) == f"{42}"
 
 
-@pytest.mark.skipif(
-    _BUG_INTERPOLATION_MATCH_ARGS, reason="Interpolation match args bug"
-)
 def test_mixed():
     v = 99
     template: Template = t"hello{42}world{v}goodbye"
