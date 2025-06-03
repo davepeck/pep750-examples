@@ -65,7 +65,7 @@ import sys
 logger = logging.getLogger(__name__)
 message_handler = logging.StreamHandler(sys.stdout)
 message_handler.setFormatter(MessageFormatter())
-logger.addHandler(handler)
+logger.addHandler(message_handler)
 
 values_handler = logging.StreamHandler(sys.stderr)
 values_handler.setFormatter(ValuesFormatter())
