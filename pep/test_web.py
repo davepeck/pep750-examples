@@ -143,6 +143,7 @@ def test_html_nested_template_text():
     template: Template = t"<p>{good}</p>"
     element = html(template)
     expected = Element("p", {}, [Element("script", {}, ["alert('good')"])])
+    assert element == expected
 
 
 def test_html_p_with_attributes():
